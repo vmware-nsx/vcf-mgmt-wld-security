@@ -1,63 +1,3 @@
-data "nsxt_policy_service" "icmp_all" {
-  display_name = "ICMP ALL"
-}
-
-data "nsxt_policy_service" "dns-tcp" {
-  display_name = "DNS-TCP"
-}
-
-data "nsxt_policy_service" "activdir" {
-  display_name = "Microsoft Active Directory V1"
-}
-
-data "nsxt_policy_service" "dns-udp" {
-  display_name = "DNS-UDP"
-}
-
-data "nsxt_policy_service" "https" {
-  display_name = "HTTPS"
-}
-
-data "nsxt_policy_service" "ldap" {
-  display_name = "LDAP"
-}
-
-data "nsxt_policy_service" "ldaps" {
-  display_name = "LDAP-over-SSL"
-}
-
-data "nsxt_policy_service" "ssh" {
-  display_name = "SSH"
-}
-
-data "nsxt_policy_service" "syslog_udp" {
-  display_name = "Syslog (UDP)"
-}
-
-data "nsxt_policy_service" "ntp" {
-  display_name = "NTP"
-}
-
-data "nsxt_policy_context_profile" "ACTIVDIR" {
-  display_name = "ACTIVDIR"
-}
-
-data "nsxt_policy_context_profile" "LDAP" {
-  display_name = "LDAP"
-}
-
-data "nsxt_policy_context_profile" "DNS" {
-  display_name = "DNS"
-}
-
-data "nsxt_policy_context_profile" "SSL" {
-  display_name = "SSL"
-}
-
-data "nsxt_policy_context_profile" "DCERPC" {
-  display_name = "DCERPC"
-}
-
 resource "nsxt_policy_security_policy" "vcf_infrastructure" {
   display_name = "VCF01 Infrastructure Policy"
   description  = "Control VCF01 Infrastructure traffic"
@@ -79,7 +19,7 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
     display_name       = "Allow VCF01 to InfraSvc"
     source_groups      = [nsxt_policy_group.m01_wld.path, nsxt_policy_group.w01_wld.path]
     destination_groups = [nsxt_policy_group.infra_svc.path]
-    services           = [data.nsxt_policy_service.dns-udp.path, data.nsxt_policy_service.dns-tcp.path, data.nsxt_policy_service.ntp.path, data.nsxt_policy_service.ssh.path, data.nsxt_policy_service.syslog_udp.path]
+    services           = [data.nsxt_policy_service.dns_udp.path, data.nsxt_policy_service.dns_tcp.path, data.nsxt_policy_service.ntp.path, data.nsxt_policy_service.ssh.path, data.nsxt_policy_service.syslog_udp.path]
     action             = "ALLOW"
     logged             = false
   }
@@ -99,7 +39,7 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
 	destination_groups = [nsxt_policy_group.m01_wld.path, nsxt_policy_group.w01_wld.path, nsxt_policy_group.infra_svc.path]
     action             = "ALLOW"
     logged             = false
-    profiles           = [data.nsxt_policy_context_profile.ACTIVDIR.path]
+    profiles           = [data.nsxt_policy_context_profile.cxt_activdir.path]
   }
   
     rule {

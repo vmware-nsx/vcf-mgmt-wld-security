@@ -3,15 +3,15 @@ terraform {
   required_providers {
     nsxt = {
       source = "vmware/nsxt"
-      version = "3.6.2"
+      version = "3.7.1"
     }
   }
 }
 
 provider "nsxt" {
-  host                  = "m01-nsx01.vcf01.ans.lab"
-  username              = "admin"
-  password              = "VMware1!VMware1!"
+  host                  = var.nsx_manager
+  username              = var.nsx_username
+  password              = var.nsx_password
   allow_unverified_ssl  = true
   max_retries           = 10
   retry_min_delay       = 500

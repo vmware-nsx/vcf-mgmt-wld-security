@@ -1,21 +1,113 @@
 data "nsxt_policy_vm" "vm1" {
-  display_name = "vcf01"
+  display_name = var.sddc_manager
 }
 
 data "nsxt_policy_vm" "vm2" {
-  display_name = "m01-vc01"
+  display_name = var.m01_vcenter
 }
 
 data "nsxt_policy_vm" "vm3" {
-  display_name = "m01-nsx01a"
+  display_name = var.m01_nsx_manager_a
 }
 
 data "nsxt_policy_vm" "vm4" {
-  display_name = "w01-vc01"
+  display_name = var.w01_vcenter
 }
 
 data "nsxt_policy_vm" "vm5" {
-  display_name = "w01-nsx01a"
+  display_name = var.w01_nsx_manager_a
+}
+
+data "nsxt_policy_service" "icmp_all" {
+  display_name = var.icmp_all
+}
+
+data "nsxt_policy_service" "dns_tcp" {
+  display_name = var.dns_tcp
+}
+
+data "nsxt_policy_service" "activdir" {
+  display_name = var.activdir
+}
+
+data "nsxt_policy_service" "dns_udp" {
+  display_name = var.dns_udp
+}
+
+data "nsxt_policy_service" "https" {
+  display_name = var.https
+}
+
+data "nsxt_policy_service" "http" {
+  display_name = var.http
+}
+
+data "nsxt_policy_service" "ldap" {
+  display_name = var.ldap
+}
+
+data "nsxt_policy_service" "ldaps" {
+  display_name = var.ldaps
+}
+
+data "nsxt_policy_service" "ssh" {
+  display_name = var.ssh
+}
+
+data "nsxt_policy_service" "syslog_udp" {
+  display_name = var.syslog_udp
+}
+
+data "nsxt_policy_service" "ntp" {
+  display_name = var.ntp
+}
+
+data "nsxt_policy_service" "rdp" {
+  display_name = var.rdp
+}
+
+data "nsxt_policy_service" "update_manager" {
+  display_name = var.update_manager
+}
+
+#data "nsxt_policy_service" "tcp_902" {
+#  display_name = var.tcp_902
+#}
+
+data "nsxt_policy_service" "udp_902" {
+  display_name = var.udp_902
+}
+
+#data "nsxt_policy_service" "tcp_9000_9100" {
+#  display_name = var.tcp_9000_9100
+#}
+
+data "nsxt_policy_service" "tcp_9087" {
+  display_name = var.tcp_9087
+}
+
+data "nsxt_policy_service" "tcp_9084" {
+  display_name = var.tcp_9084
+}
+
+data "nsxt_policy_context_profile" "cxt_activdir" {
+  display_name = var.cxt_activdir
+}
+
+data "nsxt_policy_context_profile" "cxt_ldap" {
+  display_name = var.cxt_ldap
+}
+
+data "nsxt_policy_context_profile" "cxt_dns" {
+  display_name = var.cxt_dns
+}
+
+data "nsxt_policy_context_profile" "cxt_ssl" {
+  display_name = var.cxt_ssl
+}
+
+data "nsxt_policy_context_profile" "cxt_dcerpc" {
+  display_name = var.cxt_dcerpc
 }
 
 resource "nsxt_policy_vm_tags" "vm1_tags" {
@@ -184,7 +276,7 @@ resource "nsxt_policy_group" "m01_hosts" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.11.101-172.16.11.104"]
+      ip_addresses = ["172.16.11.11-172.16.11.14"]
     }
   }
 }
@@ -195,7 +287,7 @@ resource "nsxt_policy_group" "w01_hosts" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.11.105-172.16.11.107"]
+      ip_addresses = ["172.16.11.15-172.16.11.17"]
     }
   }
 }
@@ -239,7 +331,7 @@ resource "nsxt_policy_group" "w01_nfs" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.31.60"]
+      ip_addresses = ["172.16.30.60"]
     }
   }
 }
