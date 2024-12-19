@@ -1,4 +1,4 @@
-# Securing the VMware Cloud Foundation managemen domain with VMware vDefend
+# Securing the VMware Cloud Foundation management domain with VMware vDefend
 This repository provides Terraform configuration files to automate the deployment of the vDefend Distributed Firewall to secure the VMware Cloud Foundation management domain components.
 
 # Disclaimer
