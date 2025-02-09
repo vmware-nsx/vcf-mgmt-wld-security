@@ -10,16 +10,22 @@ variable "w01_vcenter" {}
 variable "w01_nsx_manager_a" {}
 variable "w01_nsx_manager_b" {}
 variable "w01_nsx_manager_c" {}
+variable "aria_lcm" {}
+variable "aria_logs" {}
 variable "icmp_all" {}
 variable "dns_tcp" {}
 variable "dns_udp" {}
+variable "dhcp_server" {}
 variable "activdir" {}
 variable "https" {}
 variable "http" {}
+variable "ftp" {}
 variable "ldap" {}
 variable "ldaps" {}
 variable "ssh" {}
 variable "syslog_udp" {}
+variable "syslog_tcp" {}
+variable "snmp" {}
 variable "ntp" {}
 variable "rdp" {}
 variable "tcp_902" {}
@@ -32,4 +38,12 @@ variable "cxt_activdir" {}
 variable "cxt_ldap" {}
 variable "cxt_dns" {}
 variable "cxt_ssl" {}
+variable "cxt_ssh" {}
 variable "cxt_dcerpc" {}
+variable "vm_management_dvpg" {}
+variable "aria_x_ans" {}
+variable "aria_ans" {}
+variable "smtp" {}
+variable "smtp_tls" {}
+variable "napp_workload_net" {}
+
