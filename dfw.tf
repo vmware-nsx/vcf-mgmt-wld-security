@@ -44,25 +44,16 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
   }
 
   rule {
-    display_name       = "VCF01 LDAP Traffic"
-    source_groups      = [nsxt_policy_group.vcf01.path, nsxt_policy_group.ad_svc.path]
-    destination_groups = [nsxt_policy_group.vcf01.path, nsxt_policy_group.ad_svc.path]
-    action             = "ALLOW"
-    logged             = false
-    services           = [data.nsxt_policy_service.ldap.path]
-  }
-
-  rule {
     display_name       = "VCF01 AD Traffic"
-    source_groups      = [nsxt_policy_group.vcf01.path, nsxt_policy_group.ad_svc.path]
-    destination_groups = [nsxt_policy_group.vcf01.path, nsxt_policy_group.ad_svc.path]
+    source_groups      = [nsxt_policy_group.vcf01.path]
+    destination_groups = [nsxt_policy_group.ad_svc.path]
     action             = "ALLOW"
     logged             = false
-    profiles           = [data.nsxt_policy_context_profile.cxt_activdir.path]
+    services           = [data.nsxt_policy_service.ldap.path,data.nsxt_policy_service.ldap_udp.path,data.nsxt_policy_service.ldaps.path,data.nsxt_policy_service.kerberos.path,data.nsxt_policy_service.kerberos_udp.path,nsxt_policy_service.tcp_3268_3269.path]
   }
 
     rule {
-    display_name       = "VCF01 Server Traffic"
+    display_name       = "VCF01 Mail Server Traffic"
     source_groups      = [nsxt_policy_group.vcf01.path]
     destination_groups = [nsxt_policy_group.smtp_svc.path]
     services           = [data.nsxt_policy_service.smtp.path,data.nsxt_policy_service.smtp_tls.path]

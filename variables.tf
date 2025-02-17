@@ -21,7 +21,10 @@ variable "https" {}
 variable "http" {}
 variable "ftp" {}
 variable "ldap" {}
+variable "ldap_udp" {}
 variable "ldaps" {}
+variable "kerberos" {}
+variable "kerberos_udp" {}
 variable "ssh" {}
 variable "syslog_udp" {}
 variable "syslog_tcp" {}
