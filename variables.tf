@@ -23,8 +23,6 @@ variable "ftp" {}
 variable "ldap" {}
 variable "ldap_udp" {}
 variable "ldaps" {}
-variable "kerberos" {}
-variable "kerberos_udp" {}
 variable "ssh" {}
 variable "syslog_udp" {}
 variable "syslog_tcp" {}
@@ -48,5 +46,8 @@ variable "aria_x_ans" {}
 variable "aria_ans" {}
 variable "smtp" {}
 variable "smtp_tls" {}
-variable "napp_workload_net" {}
+variable "m01_ssp_dvpg" {}
+variable "w01_ssp_dvpg" {}
+variable "m01_sspi_vm" {}
+variable "w01_sspi_vm" {}
 

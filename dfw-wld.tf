@@ -1,10 +1,11 @@
 resource "nsxt_policy_security_policy" "w01_policy" {
-  display_name = "VI workload domain 01 policy"
+  display_name = "W01_WLD Policy"
   description  = "Control VI workload domain traffic"
-  category     = "Application"
+  category     = "Environment"
   locked       = false
   stateful     = true
   tcp_strict   = true
+  sequence_number = 5
 
   rule {
     display_name       = "vCenter to Hosts"
@@ -66,6 +67,55 @@ resource "nsxt_policy_security_policy" "w01_policy" {
     logged             = false
   }
 
+  rule {
+    display_name       = "SSP to NSX Manager"
+    source_groups      = [nsxt_policy_group.w01_ssp.path]
+    destination_groups = [nsxt_policy_group.w01_nsx.path]
+	services           = [data.nsxt_policy_service.https.path]
+    scope              = [nsxt_policy_group.w01_nsx.path,nsxt_policy_group.w01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+
+  rule {
+    display_name       = "SSPI to SSP"
+    source_groups      = [nsxt_policy_group.w01_sspi.path]
+    destination_groups = [nsxt_policy_group.w01_ssp.path]
+    services           = [nsxt_policy_service.tcp_6443.path,data.nsxt_policy_service.https.path]
+    scope              = [nsxt_policy_group.w01_sspi.path,nsxt_policy_group.w01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+    
+  rule {
+    display_name       = "SSP to SSPI Registry"
+    source_groups      = [nsxt_policy_group.w01_ssp.path]
+	destination_groups = [nsxt_policy_group.w01_sspi.path]
+    services           = [data.nsxt_policy_service.https.path]
+    scope              = [nsxt_policy_group.w01_sspi.path,nsxt_policy_group.w01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+  
+  rule {
+    display_name       = "SSP Ingestion"
+    source_groups      = [nsxt_policy_group.w01_nsx.path,nsxt_policy_group.w01_hosts.path,nsxt_policy_group.w01_edges.path]
+	destination_groups = [nsxt_policy_group.w01_sspm.path]
+    services           = [data.nsxt_policy_service.https.path,nsxt_policy_service.tcp_9092.path]
+    scope              = [nsxt_policy_group.w01_nsx.path,nsxt_policy_group.w01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+    
+  rule {
+    display_name       = "SSP Internal"
+    source_groups      = [nsxt_policy_group.w01_ssp.path]
+    destination_groups = [nsxt_policy_group.w01_ssp.path]
+    scope              = [nsxt_policy_group.w01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+  
   rule {
     display_name       = "W01_WLD Default Drop"
     scope              = [nsxt_policy_group.w01_wld.path]

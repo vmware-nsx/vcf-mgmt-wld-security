@@ -8,24 +8,24 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
   scope        = [nsxt_policy_group.vcf01.path]
   sequence_number = 1
 
-   rule {
+  rule {
     display_name       = "Bastion to VCF01 Traffic"
     source_groups      = [nsxt_policy_group.bastion.path]
-    destination_groups = [nsxt_policy_group.vcf01.path]
+	services           = [data.nsxt_policy_service.https.path,data.nsxt_policy_service.ssh.path,data.nsxt_policy_service.icmp_all.path,data.nsxt_policy_service.rdp.path]
     action             = "ALLOW"
     logged             = false
   }
 
-    rule {
+  rule {
     display_name       = "VCF01 DNS Traffic"
     source_groups      = [nsxt_policy_group.vcf01.path]
     destination_groups = [nsxt_policy_group.dns_svc.path]
-    services           = [data.nsxt_policy_service.dns_udp.path, data.nsxt_policy_service.dns_tcp.path]
+    services           = [data.nsxt_policy_service.dns_udp.path,data.nsxt_policy_service.dns_tcp.path]
     action             = "ALLOW"
     logged             = false
   }
 
-    rule {
+  rule {
     display_name       = "VCF01 NTP Traffic"
     source_groups      = [nsxt_policy_group.vcf01.path]
     destination_groups = [nsxt_policy_group.ntp_svc.path]
@@ -34,7 +34,7 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
     logged             = false
   }
 
-    rule {
+  rule {
     display_name       = "VCF01 DHCP Traffic"
     source_groups      = [nsxt_policy_group.vcf01.path]
     destination_groups = [nsxt_policy_group.dhcp_svc.path]
@@ -49,10 +49,10 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
     destination_groups = [nsxt_policy_group.ad_svc.path]
     action             = "ALLOW"
     logged             = false
-    services           = [data.nsxt_policy_service.ldap.path,data.nsxt_policy_service.ldap_udp.path,data.nsxt_policy_service.ldaps.path,data.nsxt_policy_service.kerberos.path,data.nsxt_policy_service.kerberos_udp.path,nsxt_policy_service.tcp_3268_3269.path]
+    services           = [data.nsxt_policy_service.activdir.path]
   }
 
-    rule {
+  rule {
     display_name       = "VCF01 Mail Server Traffic"
     source_groups      = [nsxt_policy_group.vcf01.path]
     destination_groups = [nsxt_policy_group.smtp_svc.path]
@@ -61,7 +61,7 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
     logged             = false
   }
 
-    rule {
+  rule {
     display_name       = "VCF01 Automation and Management Tools"
     source_groups      = [nsxt_policy_group.tools.path]
     destination_groups = [nsxt_policy_group.vcf01.path ]
@@ -70,7 +70,7 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
     logged             = false
   }
 
-    rule {
+  rule {
     display_name       = "VCF01 Backup Traffic"
     source_groups      = [nsxt_policy_group.vcf01.path]
     destination_groups = [nsxt_policy_group.backup_server.path]
@@ -89,7 +89,7 @@ resource "nsxt_policy_security_policy" "vcf_mgmt" {
   tcp_strict   = true
   sequence_number = 1
 
-   rule {
+  rule {
     display_name       = "VCF01 HTTPS and SSH for management"
     source_groups      = [nsxt_policy_group.vcf01_mgmt.path]
     services           = [data.nsxt_policy_service.https.path,data.nsxt_policy_service.ssh.path]
@@ -98,7 +98,7 @@ resource "nsxt_policy_security_policy" "vcf_mgmt" {
     logged             = false
   }
 
-   rule {
+  rule {
     display_name       = "SDDC Management Traffic"
     source_groups      = [nsxt_policy_group.sddc_mgr.path]
     services           = [nsxt_policy_service.tcp_5480.path,data.nsxt_policy_service.icmp_all.path]
@@ -107,7 +107,7 @@ resource "nsxt_policy_security_policy" "vcf_mgmt" {
     logged             = false
   }
 
-    rule {
+  rule {
     display_name       = "vCenter ELM Traffic"
     source_groups      = [nsxt_policy_group.sddc_mgr.path, nsxt_policy_group.elm_vc.path]
     destination_groups = [nsxt_policy_group.sddc_mgr.path, nsxt_policy_group.elm_vc.path]
@@ -117,7 +117,7 @@ resource "nsxt_policy_security_policy" "vcf_mgmt" {
     logged             = false
   }
 
-    rule {
+  rule {
     display_name       = "vCenter RDU"
     source_groups      = [nsxt_policy_group.vcf01_mgmt.path]
     destination_groups = [nsxt_policy_group.vcf01_mgmt.path]
@@ -126,10 +126,18 @@ resource "nsxt_policy_security_policy" "vcf_mgmt" {
     action             = "ALLOW"
     logged             = false
   }
+  
+  rule {
+    display_name       = "Block insecure protocols"
+    services           = [data.nsxt_policy_service.rdp.path]
+	scope              = [nsxt_policy_group.vcf01.path]
+    action             = "DROP"
+    logged             = false
+  }
 }
 
 resource "nsxt_policy_security_policy" "vcf_aria" {
-  display_name = "Aria Suite Management Policy"
+  display_name = "VCF01 Aria Suite Policy"
   description  = "Control Aria Suite traffic"
   category     = "Environment"
   locked       = false
@@ -137,7 +145,7 @@ resource "nsxt_policy_security_policy" "vcf_aria" {
   tcp_strict   = true
   sequence_number = 2
 
-    rule {
+  rule {
     display_name       = "Aria Suite Internal Traffic"
     source_groups      = [nsxt_policy_group.aria_suite.path]
     destination_groups = [nsxt_policy_group.aria_suite.path]
@@ -146,7 +154,7 @@ resource "nsxt_policy_security_policy" "vcf_aria" {
     logged             = false
   }
 
-    rule {
+  rule {
     display_name       = "Aria Suite Inbound Traffic"
     source_groups      = [nsxt_policy_group.m01_wld.path]
     destination_groups = [nsxt_policy_group.aria_suite.path]
@@ -156,7 +164,7 @@ resource "nsxt_policy_security_policy" "vcf_aria" {
     logged             = false
   }
     
-    rule {
+  rule {
     display_name       = "Aria Suite Outbound Traffic"
     source_groups      = [nsxt_policy_group.aria_suite.path]
     services           = [data.nsxt_policy_service.icmp_all.path,data.nsxt_policy_service.https.path,data.nsxt_policy_service.ssh.path,data.nsxt_policy_service.snmp.path,data.nsxt_policy_service.syslog_udp.path,data.nsxt_policy_service.syslog_tcp.path,nsxt_policy_service.tcp_9000.path,nsxt_policy_service.tcp_9543.path]
@@ -165,7 +173,7 @@ resource "nsxt_policy_security_policy" "vcf_aria" {
     logged             = false
   }
 
-    rule {
+  rule {
     display_name       = "Aria Suite Default Drop"
     scope              = [nsxt_policy_group.aria_suite.path]
     action             = "DROP"
@@ -174,79 +182,14 @@ resource "nsxt_policy_security_policy" "vcf_aria" {
   }
 }
 
-resource "nsxt_policy_security_policy" "vcf_supervizor" {
-  display_name = "vSphere Supervizor Policy"
-  description  = "Control Supervizor traffic"
-  category     = "Environment"
-  locked       = false
-  stateful     = true
-  tcp_strict   = true
-  sequence_number = 3
-
-    rule {
-    display_name       = "Supervizor Internal Traffic"
-    source_groups      = [nsxt_policy_group.vcf01_sup.path]
-    destination_groups = [nsxt_policy_group.vcf01_sup.path]
-    scope              = [nsxt_policy_group.vcf01_sup.path]
-    action             = "ALLOW"
-    logged             = false
-  }
-
-    rule {
-    display_name       = "Supervizor Inbound Traffic"
-    source_groups      = [nsxt_policy_group.m01_wld.path]
-    destination_groups = [nsxt_policy_group.vcf01_sup.path]
-    services           = [data.nsxt_policy_service.https.path,data.nsxt_policy_service.http.path,nsxt_policy_service.tcp_6443.path,nsxt_policy_service.tcp_8443.path,nsxt_policy_service.tcp_5000.path]
-    scope              = [nsxt_policy_group.vcf01.path]
-    action             = "ALLOW"
-    logged             = false
-  }
-    
-    rule {
-    display_name       = "Supervizor Outbound Traffic"
-    source_groups      = [nsxt_policy_group.vcf01_sup.path]
-    services           = [data.nsxt_policy_service.https.path]
-    scope              = [nsxt_policy_group.vcf01.path]
-    action             = "ALLOW"
-    logged             = false
-  }
-
-    rule {
-    display_name       = "Supervizor Default Drop"
-    scope              = [nsxt_policy_group.vcf01_sup.path]
-    action             = "DROP"
-    logged             = true
-    log_label          = "vcf01_sup"
-  }
-}
-
-
-resource "nsxt_policy_security_policy" "vcf_bad_protocols" {
-  display_name = "Bad Protocolst Policy"
-  description  = "Control VCF01 Bad Protocolst Policy traffic"
-  category     = "Environment"
-  locked       = false
-  stateful     = true
-  tcp_strict   = true
-  scope        = [nsxt_policy_group.vcf01.path]
-  sequence_number = 4
-
-    rule {
-    display_name       = "Block insecure protocols"
-    services           = [data.nsxt_policy_service.rdp.path]
-    action             = "DROP"
-    logged             = false
-  }
-}
-
 resource "nsxt_policy_security_policy" "m01_policy" {
-  display_name = "Management workload domain policy"
+  display_name = "M01_WLD Policy"
   description  = "Control Management workload domain traffic"
-  category     = "Application"
+  category     = "Environment"
   locked       = false
   stateful     = true
   tcp_strict   = true
-  sequence_number = 0
+  sequence_number = 2
 
   rule {
     display_name       = "vCenter to Hosts"
@@ -298,6 +241,65 @@ resource "nsxt_policy_security_policy" "m01_policy" {
 #    scope              = [nsxt_policy_group.m01_nsx.path]
 #    logged             = false
 #  }
+
+  rule {
+    display_name       = "All SSPs to vCenter"
+    source_groups      = [nsxt_policy_group.vcf01_ssp.path]
+    destination_groups = [nsxt_policy_group.m01_vc.path]
+	services           = [data.nsxt_policy_service.https.path]
+    scope              = [nsxt_policy_group.m01_vc.path,nsxt_policy_group.vcf01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+
+  rule {
+    display_name       = "SSP to NSX Manager"
+    source_groups      = [nsxt_policy_group.m01_ssp.path]
+    destination_groups = [nsxt_policy_group.m01_nsx.path]
+	services           = [data.nsxt_policy_service.https.path]
+    scope              = [nsxt_policy_group.m01_nsx.path,nsxt_policy_group.m01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+
+  rule {
+    display_name       = "SSPI to SSP"
+    source_groups      = [nsxt_policy_group.m01_sspi.path]
+    destination_groups = [nsxt_policy_group.m01_ssp.path]
+    services           = [nsxt_policy_service.tcp_6443.path,data.nsxt_policy_service.https.path]
+    scope              = [nsxt_policy_group.m01_sspi.path,nsxt_policy_group.m01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+    
+  rule {
+    display_name       = "SSP to SSPI Registry"
+    source_groups      = [nsxt_policy_group.m01_ssp.path]
+	destination_groups = [nsxt_policy_group.m01_sspi.path]
+    services           = [data.nsxt_policy_service.https.path]
+    scope              = [nsxt_policy_group.m01_sspi.path,nsxt_policy_group.m01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+  
+  rule {
+    display_name       = "SSP Ingestion"
+    source_groups      = [nsxt_policy_group.m01_nsx.path,nsxt_policy_group.m01_hosts.path,nsxt_policy_group.m01_edges.path]
+	destination_groups = [nsxt_policy_group.m01_sspm.path]
+    services           = [data.nsxt_policy_service.https.path,nsxt_policy_service.tcp_9092.path]
+    scope              = [nsxt_policy_group.m01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+  
+  rule {
+    display_name       = "SSP Internal"
+    source_groups      = [nsxt_policy_group.m01_ssp.path]
+    destination_groups = [nsxt_policy_group.m01_ssp.path]
+    scope              = [nsxt_policy_group.m01_ssp.path]
+    action             = "ALLOW"
+    logged             = false
+  }
 
   rule {
     display_name       = "M01_WLD Default Drop"

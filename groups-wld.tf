@@ -6,13 +6,13 @@ data "nsxt_policy_vm" "vm8" {
   display_name = var.w01_nsx_manager_a
 }
 
-data "nsxt_policy_vm" "vm9" {
-  display_name = var.w01_nsx_manager_b
-}
+#data "nsxt_policy_vm" "vm9" {
+#  display_name = var.w01_nsx_manager_b
+#}
 
-data "nsxt_policy_vm" "vm10" {
-  display_name = var.w01_nsx_manager_c
-}
+#data "nsxt_policy_vm" "vm10" {
+#  display_name = var.w01_nsx_manager_c
+#}
 
 resource "nsxt_policy_vm_tags" "vm7_tags" {
   instance_id = data.nsxt_policy_vm.vm7.id
@@ -32,23 +32,23 @@ resource "nsxt_policy_vm_tags" "vm8_tags" {
   }
 }
 
-resource "nsxt_policy_vm_tags" "vm9_tags" {
-  instance_id = data.nsxt_policy_vm.vm9.id
-
-  tag {
-    scope = "w01"
-    tag   = "nsx01"
-  }
-}
-
-resource "nsxt_policy_vm_tags" "vm10_tags" {
-  instance_id = data.nsxt_policy_vm.vm10.id
-
-  tag {
-    scope = "w01"
-    tag   = "nsx01"
-  }
-}
+#resource "nsxt_policy_vm_tags" "vm9_tags" {
+#  instance_id = data.nsxt_policy_vm.vm9.id
+#
+#  tag {
+#    scope = "w01"
+#    tag   = "nsx01"
+#  }
+#}
+#
+#resource "nsxt_policy_vm_tags" "vm10_tags" {
+#  instance_id = data.nsxt_policy_vm.vm10.id
+#
+#  tag {
+#    scope = "w01"
+#    tag   = "nsx01"
+#  }
+#}
 
 resource "nsxt_policy_group" "w01_vc" {
   nsx_id       = "W01_VC"
@@ -96,7 +96,7 @@ resource "nsxt_policy_group" "w01_wld" {
  
   criteria {
     path_expression {
-      member_paths = [nsxt_policy_group.w01_hosts.path,nsxt_policy_group.w01_edges.path]
+      member_paths = [nsxt_policy_group.w01_hosts.path,nsxt_policy_group.w01_edges.path,nsxt_policy_group.w01_ssp.path]
     }
   }
 }
@@ -119,6 +119,64 @@ resource "nsxt_policy_group" "w01_hosts" {
   criteria {
     ipaddress_expression {
       ip_addresses = ["172.16.11.15-172.16.11.17"]
+    }
+  }
+}
+
+#VI (W01_WLD) workload domain SSP
+
+data "nsxt_policy_vm" "vm11" {
+  display_name = var.w01_sspi_vm
+}
+
+data "nsxt_policy_segment" "w01_ssp_dvpg" {
+  display_name = var.w01_ssp_dvpg
+}
+
+resource "nsxt_policy_vm_tags" "vm11_tags" {
+  instance_id = data.nsxt_policy_vm.vm11.id
+
+  tag {
+    scope = "w01"
+    tag   = "sspi01"
+  }
+}
+
+resource "nsxt_policy_group" "w01_sspi" {
+  nsx_id       = "W01_SSPI"
+  display_name = "W01_SSPI"
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key         = "Tag"
+      operator    = "EQUALS"
+      value       = "w01|sspi01"
+    }
+  }
+}
+
+resource "nsxt_policy_group" "w01_ssp" {
+  nsx_id       = "W01_SSP"
+  display_name = "W01_SSP"
+  
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key         = "Name"
+      operator    = "STARTSWITH"
+      value       = "w01-ssp-"
+    }
+  }
+}
+
+resource "nsxt_policy_group" "w01_sspm" {
+  nsx_id       = "W01_SSPM"
+  display_name = "W01_SSPM"
+  group_type   = "IPAddress"
+
+  criteria {
+    ipaddress_expression {
+      ip_addresses = ["172.16.40.65-172.16.40.92"]
     }
   }
 }

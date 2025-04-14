@@ -138,7 +138,7 @@ resource "nsxt_policy_group" "m01_wld" {
  
   criteria {
     path_expression {
-      member_paths = [nsxt_policy_group.m01_hosts.path,nsxt_policy_group.m01_edges.path]
+      member_paths = [nsxt_policy_group.m01_hosts.path,nsxt_policy_group.m01_edges.path,nsxt_policy_group.m01_ssp.path]
     }
   }
 }
@@ -160,7 +160,7 @@ resource "nsxt_policy_group" "vcf01" {
 
   criteria {
     path_expression {
-      member_paths = [nsxt_policy_group.vcf01_mgmt.path,nsxt_policy_group.aria_suite.path]
+      member_paths = [nsxt_policy_group.vcf01_mgmt.path,nsxt_policy_group.aria_suite.path,nsxt_policy_group.vcf01_ssp.path]
     }
   }
 }
@@ -306,20 +306,71 @@ resource "nsxt_policy_group" "aria_suite" {
   }
 }
 
-#Supervizor
+#Management workload domain SSP
 
-data "nsxt_policy_segment" "napp_workload_net" {
-  display_name = var.napp_workload_net
+data "nsxt_policy_vm" "vm6" {
+  display_name = var.m01_sspi_vm
 }
 
-resource "nsxt_policy_group" "vcf01_sup" {
-  nsx_id       = "VCF01_SUP"
-  display_name = "VCF01_SUP"
+data "nsxt_policy_segment" "m01_ssp_dvpg" {
+  display_name = var.m01_ssp_dvpg
+}
 
+resource "nsxt_policy_vm_tags" "vm6_tags" {
+  instance_id = data.nsxt_policy_vm.vm6.id
+
+  tag {
+    scope = "m01"
+    tag   = "sspi01"
+  }
+}
+
+resource "nsxt_policy_group" "m01_sspi" {
+  nsx_id       = "M01_SSPI"
+  display_name = "M01_SSPI"
   criteria {
-    path_expression {
-      member_paths = [data.nsxt_policy_segment.napp_workload_net.path]
+    condition {
+      member_type = "VirtualMachine"
+      key         = "Tag"
+      operator    = "EQUALS"
+      value       = "m01|sspi01"
     }
   }
 }
 
+resource "nsxt_policy_group" "m01_ssp" {
+  nsx_id       = "M01_SSP"
+  display_name = "M01_SSP"
+  
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key         = "Name"
+      operator    = "STARTSWITH"
+      value       = "m01-ssp-"
+    }
+  }
+}
+
+resource "nsxt_policy_group" "m01_sspm" {
+  nsx_id       = "M01_SSPM"
+  display_name = "M01_SSPM"
+  group_type   = "IPAddress"
+
+  criteria {
+    ipaddress_expression {
+      ip_addresses = ["172.16.40.11-172.16.40.32"]
+    }
+  }
+}
+
+resource "nsxt_policy_group" "vcf01_ssp" {
+  nsx_id       = "VCF01_SSP"
+  display_name = "VCF01_SSP"
+
+  criteria {
+    path_expression {
+      member_paths = [data.nsxt_policy_segment.m01_ssp_dvpg.path]
+    }
+  }
+}

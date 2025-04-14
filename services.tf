@@ -38,14 +38,6 @@ data "nsxt_policy_service" "ldaps" {
   display_name = var.ldaps
 }
 
-data "nsxt_policy_service" "kerberos" {
-  display_name = var.kerberos
-}
-
-data "nsxt_policy_service" "kerberos_udp" {
-  display_name = var.kerberos_udp
-}
-
 data "nsxt_policy_service" "ssh" {
   display_name = var.ssh
 }
@@ -300,12 +292,12 @@ resource "nsxt_policy_service" "tcp_5000" {
   }
 }
 
-resource "nsxt_policy_service" "tcp_3268_3269" {
-  description  = "Active Directory Global Catalog"
-  display_name = "TCP-3268_3269"
+resource "nsxt_policy_service" "tcp_9092" {
+  description  = "SSP Messaging"
+  display_name = "TCP-9092"
 
   l4_port_set_entry {
     protocol          = "TCP"
-    destination_ports = ["3268","3269"]
+    destination_ports = ["9092"]
   }
 }
