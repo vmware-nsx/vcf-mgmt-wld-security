@@ -10,8 +10,6 @@ variable "w01_vcenter" {}
 variable "w01_nsx_manager_a" {}
 variable "w01_nsx_manager_b" {}
 variable "w01_nsx_manager_c" {}
-variable "aria_lcm" {}
-variable "aria_logs" {}
 variable "icmp_all" {}
 variable "dns_tcp" {}
 variable "dns_udp" {}

@@ -301,3 +301,22 @@ resource "nsxt_policy_service" "tcp_9092" {
     destination_ports = ["9092"]
   }
 }
+
+resource "nsxt_policy_context_profile_custom_attribute" "custom_fqdn1" {
+  key       = "DOMAIN_NAME"
+  attribute = "*.broadcom.com"
+}
+
+resource "nsxt_policy_context_profile_custom_attribute" "custom_fqdn2" {
+  key       = "DOMAIN_NAME"
+  attribute = "*.vmware.com"
+}
+
+resource "nsxt_policy_context_profile" "internet_fqdns" {
+  display_name = "INTERNET_FQDNS"
+  description  = "VCF upgrade and patch binaries"
+  domain_name {
+     value       = ["*.broadcom.com", "*.vmware.com"]
+  }
+  depends_on = [nsxt_policy_context_profile_custom_attribute.custom_fqdn1,nsxt_policy_context_profile_custom_attribute.custom_fqdn2]
+}

@@ -6,13 +6,13 @@ data "nsxt_policy_vm" "vm8" {
   display_name = var.w01_nsx_manager_a
 }
 
-#data "nsxt_policy_vm" "vm9" {
-#  display_name = var.w01_nsx_manager_b
-#}
+data "nsxt_policy_vm" "vm9" {
+  display_name = var.w01_nsx_manager_b
+}
 
-#data "nsxt_policy_vm" "vm10" {
-#  display_name = var.w01_nsx_manager_c
-#}
+data "nsxt_policy_vm" "vm10" {
+  display_name = var.w01_nsx_manager_c
+}
 
 resource "nsxt_policy_vm_tags" "vm7_tags" {
   instance_id = data.nsxt_policy_vm.vm7.id
@@ -32,23 +32,23 @@ resource "nsxt_policy_vm_tags" "vm8_tags" {
   }
 }
 
-#resource "nsxt_policy_vm_tags" "vm9_tags" {
-#  instance_id = data.nsxt_policy_vm.vm9.id
-#
-#  tag {
-#    scope = "w01"
-#    tag   = "nsx01"
-#  }
-#}
-#
-#resource "nsxt_policy_vm_tags" "vm10_tags" {
-#  instance_id = data.nsxt_policy_vm.vm10.id
-#
-#  tag {
-#    scope = "w01"
-#    tag   = "nsx01"
-#  }
-#}
+resource "nsxt_policy_vm_tags" "vm9_tags" {
+  instance_id = data.nsxt_policy_vm.vm9.id
+
+  tag {
+    scope = "w01"
+    tag   = "nsx01"
+  }
+}
+
+resource "nsxt_policy_vm_tags" "vm10_tags" {
+  instance_id = data.nsxt_policy_vm.vm10.id
+
+  tag {
+    scope = "w01"
+    tag   = "nsx01"
+  }
+}
 
 resource "nsxt_policy_group" "w01_vc" {
   nsx_id       = "W01_VC"

@@ -285,27 +285,6 @@ resource "nsxt_policy_group" "backup_server" {
   }
 }
 
-#Aria Suite
-
-data "nsxt_policy_segment" "aria_x_ans" {
-  display_name = var.aria_x_ans
-}
-
-data "nsxt_policy_segment" "aria_ans" {
-  display_name = var.aria_ans
-}
-
-resource "nsxt_policy_group" "aria_suite" {
-  nsx_id       = "ARIA_SUITE"
-  display_name = "ARIA_SUITE"
-
-  criteria {
-    path_expression {
-      member_paths = [data.nsxt_policy_segment.aria_x_ans.path,data.nsxt_policy_segment.aria_ans.path]
-    }
-  }
-}
-
 #Management workload domain SSP
 
 data "nsxt_policy_vm" "vm6" {
@@ -371,6 +350,18 @@ resource "nsxt_policy_group" "vcf01_ssp" {
   criteria {
     path_expression {
       member_paths = [data.nsxt_policy_segment.m01_ssp_dvpg.path]
+    }
+  }
+}
+
+resource "nsxt_policy_group" "siem_svc" {
+  nsx_id       = "SIEM_SVC"
+  display_name = "SIEM_SVC"
+  group_type   = "IPAddress"
+
+  criteria {
+    ipaddress_expression {
+      ip_addresses = ["192.168.110.12"]
     }
   }
 }
