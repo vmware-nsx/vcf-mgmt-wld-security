@@ -172,7 +172,7 @@ resource "nsxt_policy_group" "m01_edges" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.10.61-172.16.10.64"]
+      ip_addresses = [var.m01_edges]
     }
   }
 }
@@ -184,7 +184,7 @@ resource "nsxt_policy_group" "m01_hosts" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.11.11-172.16.11.14"]
+      ip_addresses = [var.m01_hosts]
     }
   }
 }
@@ -196,7 +196,7 @@ resource "nsxt_policy_group" "dns_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["192.168.110.10"]
+      ip_addresses = [var.dns_server]
     }
   }
 }
@@ -208,7 +208,7 @@ resource "nsxt_policy_group" "ntp_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["192.168.110.1"]
+      ip_addresses = [var.ntp_server]
     }
   }
 }
@@ -220,7 +220,7 @@ resource "nsxt_policy_group" "dhcp_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["192.168.110.10"]
+      ip_addresses = [var.dhcp_server]
     }
   }
 }
@@ -232,7 +232,7 @@ resource "nsxt_policy_group" "ad_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["192.168.110.10"]
+      ip_addresses = [var.ad_server]
     }
   }
 }
@@ -244,7 +244,7 @@ resource "nsxt_policy_group" "smtp_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["192.168.110.1"]
+      ip_addresses = [var.smtp_server]
     }
   }
 }
@@ -256,7 +256,7 @@ resource "nsxt_policy_group" "bastion" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["192.168.110.10"]
+      ip_addresses = [var.bastion_host]
     }
   }
 }
@@ -268,19 +268,19 @@ resource "nsxt_policy_group" "tools" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["192.168.110.11"]
+      ip_addresses = [var.tools_server]
     }
   }
 }
 
-resource "nsxt_policy_group" "backup_server" {
-  nsx_id       = "BACKUP_SERVER"
-  display_name = "BACKUP_SERVER"
+resource "nsxt_policy_group" "backup_svc" {
+  nsx_id       = "BACKUP_SVC"
+  display_name = "BACKUP_SVC"
   group_type   = "IPAddress"
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["192.168.110.11"]
+      ip_addresses = [var.backup_server]
     }
   }
 }
@@ -338,7 +338,7 @@ resource "nsxt_policy_group" "m01_sspm" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.40.11-172.16.40.32"]
+      ip_addresses = [var.m01_sspm]
     }
   }
 }
@@ -361,7 +361,7 @@ resource "nsxt_policy_group" "siem_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["192.168.110.12"]
+      ip_addresses = [var.siem_server]
     }
   }
 }

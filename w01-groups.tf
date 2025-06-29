@@ -107,7 +107,7 @@ resource "nsxt_policy_group" "w01_edges" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.10.65-172.16.10.68"]
+      ip_addresses = [var.w01_edges]
     }
   }
 }
@@ -118,7 +118,7 @@ resource "nsxt_policy_group" "w01_hosts" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.11.15-172.16.11.17"]
+      ip_addresses = [var.w01_hosts]
     }
   }
 }
@@ -176,7 +176,7 @@ resource "nsxt_policy_group" "w01_sspm" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.40.65-172.16.40.92"]
+      ip_addresses = [var.w01_sspm]
     }
   }
 }

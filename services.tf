@@ -1,125 +1,125 @@
 data "nsxt_policy_service" "icmp_all" {
-  display_name = var.icmp_all
+  display_name = "ICMP ALL"
 }
 
 data "nsxt_policy_service" "dns_tcp" {
-  display_name = var.dns_tcp
-}
-
-data "nsxt_policy_service" "activdir" {
-  display_name = var.activdir
+  display_name = "DNS-TCP"
 }
 
 data "nsxt_policy_service" "dns_udp" {
-  display_name = var.dns_udp
+  display_name = "DNS-UDP"
+}
+
+data "nsxt_policy_service" "activdir" {
+  display_name = "Microsoft Active Directory V1"
 }
 
 data "nsxt_policy_service" "dhcp_server" {
-  display_name = var.dhcp_server
+  display_name = "DHCP-Server"
 }
 
 data "nsxt_policy_service" "https" {
-  display_name = var.https
+  display_name = "HTTPS"
 }
 
 data "nsxt_policy_service" "http" {
-  display_name = var.http
+  display_name = "HTTP"
 }
 
 data "nsxt_policy_service" "ldap" {
-  display_name = var.ldap
+  display_name = "LDAP"
 }
 
 data "nsxt_policy_service" "ldap_udp" {
-  display_name = var.ldap_udp
+  display_name = "LDAP-UDP"
 }
 
 data "nsxt_policy_service" "ldaps" {
-  display_name = var.ldaps
+  display_name = "LDAP-over-SSL"
 }
 
 data "nsxt_policy_service" "ssh" {
-  display_name = var.ssh
+  display_name = "SSH"
 }
 
 data "nsxt_policy_service" "syslog_udp" {
-  display_name = var.syslog_udp
+  display_name = "Syslog (UDP)"
 }
 
 data "nsxt_policy_service" "syslog_tcp" {
-  display_name = var.syslog_tcp
+  display_name = "Syslog (TCP)"
 }
 
 data "nsxt_policy_service" "snmp" {
-  display_name = var.snmp
+  display_name = "SNMP"
 }
 
 data "nsxt_policy_service" "ntp" {
-  display_name = var.ntp
+  display_name = "NTP"
 }
 
 data "nsxt_policy_service" "rdp" {
-  display_name = var.rdp
+  display_name = "RDP"
 }
 
 data "nsxt_policy_service" "update_manager" {
-  display_name = var.update_manager
+  display_name = "Update Manager"
 }
 
 #data "nsxt_policy_service" "tcp_902" {
-#  display_name = var.tcp_902
+#  display_name = "VMware-ESXi5.x-TCP"
 #}
 
 data "nsxt_policy_service" "udp_902" {
-  display_name = var.udp_902
+  display_name = "VMware-ESXi5.x-UDP"
 }
 
 #data "nsxt_policy_service" "tcp_9000_9100" {
-#  display_name = var.tcp_9000_9100
+#  display_name = "VMware-UpdateMgr"
 #}
 
 data "nsxt_policy_service" "tcp_9087" {
-  display_name = var.tcp_9087
+  display_name = "Vmware-UpdateMgr-update"
 }
 
 data "nsxt_policy_service" "tcp_9084" {
-  display_name = var.tcp_9084
+  display_name = "VMware-UpdateMgr-VUM"
 }
 
 data "nsxt_policy_service" "ftp" {
-  display_name = var.ftp
+  display_name = "FTP"
 }
 
 data "nsxt_policy_service" "smtp" {
-  display_name = var.smtp
+  display_name = "SMTP"
 }
 
 data "nsxt_policy_service" "smtp_tls" {
-  display_name = var.smtp_tls
+  display_name = "SMTP_TLS"
 }
 
 data "nsxt_policy_context_profile" "cxt_activdir" {
-  display_name = var.cxt_activdir
+  display_name = "ACTIVDIR"
 }
 
 data "nsxt_policy_context_profile" "cxt_ldap" {
-  display_name = var.cxt_ldap
+  display_name = "LDAP"
 }
 
 data "nsxt_policy_context_profile" "cxt_dns" {
-  display_name = var.cxt_dns
+  display_name = "DNS"
 }
 
 data "nsxt_policy_context_profile" "cxt_ssl" {
-  display_name = var.cxt_ssl
+  display_name = "SSL"
 }
 
 data "nsxt_policy_context_profile" "cxt_dcerpc" {
-  display_name = var.cxt_dcerpc
+  display_name = "DCERPC"
 }
 
 data "nsxt_policy_context_profile" "cxt_ssh" {
-  display_name = var.cxt_ssh
+  display_name = "SSH"
 }
 
 resource "nsxt_policy_service" "tcp_2012_2020" {

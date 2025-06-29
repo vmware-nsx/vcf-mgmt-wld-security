@@ -1,3 +1,13 @@
+variable "dns_server" {}  
+variable "ntp_server" {}   
+variable "dhcp_server" {}  
+variable "ad_server" {}    
+variable "smtp_server" {}  
+variable "bastion_host" {} 
+variable "tools_server" {} 
+variable "backup_server" {}
+variable "siem_server" {}
+
 variable "nsx_manager" {}
 variable "nsx_username" {}
 variable "nsx_password" {}
@@ -6,46 +16,24 @@ variable "m01_vcenter" {}
 variable "m01_nsx_manager_a" {}
 variable "m01_nsx_manager_b" {}
 variable "m01_nsx_manager_c" {}
+variable "m01_edges" {}
+variable "m01_hosts" {}
+variable "m01_sspm" {} 
+variable "m01_ssp_dvpg" {}
+variable "w01_ssp_dvpg" {} 
 variable "w01_vcenter" {}
 variable "w01_nsx_manager_a" {}
 variable "w01_nsx_manager_b" {}
 variable "w01_nsx_manager_c" {}
-variable "icmp_all" {}
-variable "dns_tcp" {}
-variable "dns_udp" {}
-variable "dhcp_server" {}
-variable "activdir" {}
-variable "https" {}
-variable "http" {}
-variable "ftp" {}
-variable "ldap" {}
-variable "ldap_udp" {}
-variable "ldaps" {}
-variable "ssh" {}
-variable "syslog_udp" {}
-variable "syslog_tcp" {}
-variable "snmp" {}
-variable "ntp" {}
-variable "rdp" {}
-variable "tcp_902" {}
-variable "udp_902" {}
-variable "tcp_9000_9100" {}
-variable "tcp_9087" {}
-variable "tcp_9084" {}
-variable "update_manager" {}
-variable "cxt_activdir" {}
-variable "cxt_ldap" {}
-variable "cxt_dns" {}
-variable "cxt_ssl" {}
-variable "cxt_ssh" {}
-variable "cxt_dcerpc" {}
+variable "w01_edges" {}
+variable "w01_hosts" {}
+variable "w01_sspm" {}
+variable "m01_sspi_vm" {}
+variable "w01_sspi_vm" {}  
 variable "vm_management_dvpg" {}
 variable "aria_x_ans" {}
 variable "aria_ans" {}
-variable "smtp" {}
-variable "smtp_tls" {}
-variable "m01_ssp_dvpg" {}
-variable "w01_ssp_dvpg" {}
-variable "m01_sspi_vm" {}
-variable "w01_sspi_vm" {}
 
+
+
+ 
