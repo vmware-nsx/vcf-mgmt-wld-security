@@ -168,7 +168,7 @@ resource "nsxt_policy_service" "tcp_7475_7476" {
 
   l4_port_set_entry {
     protocol          = "TCP"
-    destination_ports = ["7475","7475"]
+    destination_ports = ["7475","7476"]
   }
 }
 
