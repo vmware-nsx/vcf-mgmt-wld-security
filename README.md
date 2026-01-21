@@ -2,11 +2,11 @@
 This repository provides Terraform configuration files to automate the deployment of the vDefend Distributed Firewall to secure the VMware Cloud Foundation management domain components.
 
 # Disclaimer
-The script is just an example of how you can quickly secure the VMware Cloud Foundation (VCF) management components: SDDC Manager, vCenter Servers, NSX Managers, etc.
+The script is just an example of how you can quickly secure the VMware Cloud Foundation (VCF) management components: VCF Fleet, SDDC Manager, vCenter Servers, NSX Managers, etc.
 You are solely responsible for determining its appropriateness in your VCF environments.
 
 # Applicable versions
-VCF 9.0.X or above is requited. 
+VCF 9.0.X 
 
 # NSX on DVPGs
 "NSX on DVPGs" has to be enabled for the respective vSphere cluster.
