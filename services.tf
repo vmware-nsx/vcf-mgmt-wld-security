@@ -2,6 +2,10 @@ data "nsxt_policy_service" "icmp_all" {
   display_name = "ICMP ALL"
 }
 
+data "nsxt_policy_service" "icmp_echo" {
+  display_name = "ICMP Echo Request"
+}
+
 data "nsxt_policy_service" "dns_tcp" {
   display_name = "DNS-TCP"
 }
@@ -302,6 +306,46 @@ resource "nsxt_policy_service" "tcp_9092" {
   }
 }
 
+resource "nsxt_policy_service" "tcp_30000_30005" {
+  description  = "VCF Ops LCM"
+  display_name = "TCP-30000_30005"
+
+  l4_port_set_entry {
+    protocol          = "TCP"
+    destination_ports = ["30000-30005"]
+  }
+}
+
+resource "nsxt_policy_service" "tcp_1991" {
+  description  = "VCF Operations for Networks tcp-1991"
+  display_name = "TCP-1991"
+
+  l4_port_set_entry {
+    protocol          = "TCP"
+    destination_ports = ["1991"]
+  }
+}
+
+resource "nsxt_policy_service" "udp_2055" {
+  description  = "VCF Operations for Networks udp-2055"
+  display_name = "UDP-2055"
+
+  l4_port_set_entry {
+    protocol          = "UDP"
+    destination_ports = ["2055"]
+  }
+}
+
+resource "nsxt_policy_service" "tcp_1443" {
+  description  = "IOFilterVP service"
+  display_name = "TCP-1443"
+
+  l4_port_set_entry {
+    protocol          = "TCP"
+    destination_ports = ["1443"]
+  }
+}
+
 resource "nsxt_policy_context_profile_custom_attribute" "custom_fqdn1" {
   key       = "DOMAIN_NAME"
   attribute = "*.broadcom.com"
@@ -312,11 +356,16 @@ resource "nsxt_policy_context_profile_custom_attribute" "custom_fqdn2" {
   attribute = "*.vmware.com"
 }
 
+resource "nsxt_policy_context_profile_custom_attribute" "custom_fqdn3" {
+  key       = "DOMAIN_NAME"
+  attribute = "*.broadcom.net"
+}
+
 resource "nsxt_policy_context_profile" "internet_fqdns" {
   display_name = "INTERNET_FQDNS"
   description  = "VCF upgrade and patch binaries"
   domain_name {
-     value       = ["*.broadcom.com", "*.vmware.com"]
+     value       = ["*.broadcom.com", "*.vmware.com", "*.broadcom.net"]
   }
-  depends_on = [nsxt_policy_context_profile_custom_attribute.custom_fqdn1,nsxt_policy_context_profile_custom_attribute.custom_fqdn2]
+  depends_on = [nsxt_policy_context_profile_custom_attribute.custom_fqdn1,nsxt_policy_context_profile_custom_attribute.custom_fqdn2,nsxt_policy_context_profile_custom_attribute.custom_fqdn3]
 }
