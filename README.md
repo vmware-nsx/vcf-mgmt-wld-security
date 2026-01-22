@@ -6,7 +6,7 @@ The script is just an example of how you can quickly secure the VMware Cloud Fou
 You are solely responsible for determining its appropriateness in your VCF environments.
 
 # Applicable versions
-VCF 5.2.0 (NSX 4.2.0) or above is requited. 
+VCF 9.0.X
 
 # NSX on DVPGs
 "NSX on DVPGs" has to be enabled for the respective vSphere cluster.
