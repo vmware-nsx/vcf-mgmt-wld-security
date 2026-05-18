@@ -3,24 +3,24 @@ data "nsxt_policy_vm" "vm1" {
 }
 
 data "nsxt_policy_vm" "vm2" {
-  display_name = var.vcfopslcm
+  display_name = var.vcf_lic
 }
 
-data "nsxt_policy_vm" "vm3" {
-  display_name = var.vcfops_logs
-}
+#data "nsxt_policy_vm" "vm3" {
+#  display_name = var.vcfops_logs
+#}
 
-data "nsxt_policy_vm" "vm4" {
-  display_name = var.vcfops_net
-}
+#data "nsxt_policy_vm" "vm4" {
+#  display_name = var.vcfops_net
+#}
 
 data "nsxt_policy_vm" "vm6" {
   display_name = var.vcfops_cp
 }
 
-data "nsxt_policy_vm" "vm7" {
-  display_name = var.vcfops_net_cn
-}
+#data "nsxt_policy_vm" "vm7" {
+#  display_name = var.vcfops_net_cn
+#}
 
 data "nsxt_policy_vm" "vm8" {
   display_name = var.sddc
@@ -40,27 +40,27 @@ resource "nsxt_policy_vm_tags" "vm2_tags" {
 
   tag {
     scope = "vcf_fm"
-    tag   = "ops_fm"
+    tag   = "vcf_lic"
   }
 }
 
-resource "nsxt_policy_vm_tags" "vm3_tags" {
-  instance_id = data.nsxt_policy_vm.vm3.id
+#resource "nsxt_policy_vm_tags" "vm3_tags" {
+#  instance_id = data.nsxt_policy_vm.vm3.id
+#
+#  tag {
+#    scope = "vcf_fm"
+#    tag   = "ops_log"
+#  }
+#}
 
-  tag {
-    scope = "vcf_fm"
-    tag   = "ops_log"
-  }
-}
-
-resource "nsxt_policy_vm_tags" "vm4_tags" {
-  instance_id = data.nsxt_policy_vm.vm4.id
-
-  tag {
-    scope = "vcf_fm"
-    tag   = "ops_net"
-  }
-}
+#resource "nsxt_policy_vm_tags" "vm4_tags" {
+#  instance_id = data.nsxt_policy_vm.vm4.id
+#
+#  tag {
+#    scope = "vcf_fm"
+#    tag   = "ops_net"
+#  }
+#}
 
 resource "nsxt_policy_vm_tags" "vm6_tags" {
   instance_id = data.nsxt_policy_vm.vm6.id
@@ -71,14 +71,14 @@ resource "nsxt_policy_vm_tags" "vm6_tags" {
   }
 }
 
-resource "nsxt_policy_vm_tags" "vm7_tags" {
-  instance_id = data.nsxt_policy_vm.vm7.id
-
-  tag {
-    scope = "vcf01_m"
-    tag   = "ops_net_cn"
-  }
-}
+#resource "nsxt_policy_vm_tags" "vm7_tags" {
+#  instance_id = data.nsxt_policy_vm.vm7.id
+#
+#  tag {
+#    scope = "vcf01_m"
+#    tag   = "ops_net_cn"
+#  }
+#}
 
 resource "nsxt_policy_vm_tags" "vm8_tags" {
   instance_id = data.nsxt_policy_vm.vm8.id
@@ -111,6 +111,19 @@ resource "nsxt_policy_group" "vcf01_ops_cp" {
       key         = "Tag"
       operator    = "EQUALS"
       value       = "vcf01_m|ops_cp"
+    }
+  }
+}
+
+resource "nsxt_policy_group" "vcf_lic" {
+  nsx_id       = "VCF_LIC"
+  display_name = "VCF_LIC"
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key         = "Tag"
+      operator    = "EQUALS"
+      value       = "vcf_fm|vcf_lic"
     }
   }
 }
@@ -167,6 +180,19 @@ resource "nsxt_policy_group" "vcf01_ops_net_cn" {
   }
 }
 
+resource "nsxt_policy_group" "vcf01_msvc" {
+  nsx_id       = "VCF01_MSVC"
+  display_name = "VCF01_MSVC"
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key         = "Name"
+      operator    = "STARTSWITH"
+      value       = var.vcfmsvc
+    }
+  }
+}
+
 resource "nsxt_policy_group" "vcf_a" {
   nsx_id       = "VCF_A"
   display_name = "VCF_A"
@@ -175,7 +201,7 @@ resource "nsxt_policy_group" "vcf_a" {
       member_type = "VirtualMachine"
       key         = "Name"
       operator    = "STARTSWITH"
-      value       = var.vcfa01
+      value       = var.vcfa
     }
   }
 }
@@ -222,6 +248,16 @@ resource "nsxt_policy_group" "vcf_fm" {
   criteria {
     path_expression {
       member_paths = [nsxt_policy_group.vcf_a.path]
+    }
+  }
+  
+  conjunction {
+    operator = "OR"
+  }
+  
+  criteria {
+    path_expression {
+      member_paths = [nsxt_policy_group.vcf01_msvc.path]
     }
   }
   

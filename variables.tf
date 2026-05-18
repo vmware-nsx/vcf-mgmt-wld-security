@@ -13,10 +13,11 @@ variable "backup_server" {}
 variable "siem_server" {}
 
 variable "vcfops01" {}
-variable "vcfopslcm" {}
+variable "vcfmsvc" {}
 variable "vcfops_logs" {}
 variable "vcfops_net" {}
-variable "vcfa01" {}
+variable "vcfa" {}
+variable "vcf_lic" {}
 
 variable "sddc" {}
 variable "vcfops_cp" {}

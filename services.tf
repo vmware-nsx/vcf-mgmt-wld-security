@@ -346,6 +346,16 @@ resource "nsxt_policy_service" "tcp_1443" {
   }
 }
 
+resource "nsxt_policy_service" "tcp_4505_4506" {
+  description  = "VCF Management Service"
+  display_name = "TCP-4505-4506"
+
+  l4_port_set_entry {
+    protocol          = "TCP"
+    destination_ports = ["4505-4506"]
+  }
+}
+
 resource "nsxt_policy_context_profile_custom_attribute" "custom_fqdn1" {
   key       = "DOMAIN_NAME"
   attribute = "*.broadcom.com"
