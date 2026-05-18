@@ -73,6 +73,14 @@ resource "nsxt_policy_security_policy" "vcf_fm_environment" {
   sequence_number = 2
 
   rule {
+    display_name       = "VCF Fleet Management Intra-Environment"
+    source_groups      = [nsxt_policy_group.vcf_fm.path]
+    destination_groups = [nsxt_policy_group.vcf_fm.path]
+    action             = "JUMP_TO_APPLICATION"
+    logged             = false
+  }
+  
+  rule {
     display_name       = "VCF Fleet Management to VCF01 Instance"
     source_groups      = [nsxt_policy_group.vcf_fm.path]
     destination_groups = [nsxt_policy_group.vcf01_m01.path,nsxt_policy_group.vcf01_w01.path]
@@ -98,12 +106,21 @@ resource "nsxt_policy_security_policy" "vcf_fm_environment" {
     action             = "ALLOW"
     logged             = false
   }
+  
+  rule {
+    display_name       = "VCF01 Instance to VCF Management Services"
+    source_groups      = [nsxt_policy_group.vcf01_m01.path,nsxt_policy_group.vcf01_w01.path]
+    destination_groups = [nsxt_policy_group.vcf01_msvc.path]
+    services           = [data.nsxt_policy_service.https.path,nsxt_policy_service.tcp_4505_4506.path]
+    action             = "ALLOW"
+    logged             = false
+  }
 
   rule {
     display_name       = "W01 Supervisor to VCF OPS CP"
     source_groups      = [nsxt_policy_group.w01_sup01.path]
     destination_groups = [nsxt_policy_group.vcf01_ops_cp.path]
-    services           = [nsxt_policy_service.tcp_8443.path]
+    services           = [data.nsxt_policy_service.https.path]
     action             = "ALLOW"
     logged             = false
   }  
@@ -133,14 +150,6 @@ resource "nsxt_policy_security_policy" "vcf_fm_environment" {
     services           = [data.nsxt_policy_service.https.path]
     action             = "ALLOW"
     logged             = false
-  }
-
-  rule {
-    display_name       = "VCF Fleet Management Intra-Environment"
-    source_groups      = [nsxt_policy_group.vcf_fm.path]
-    destination_groups = [nsxt_policy_group.vcf_fm.path]
-    action             = "JUMP_TO_APPLICATION"
-    logged             = false
   }  
 
   rule {
@@ -161,6 +170,14 @@ resource "nsxt_policy_security_policy" "vcf01_m01_environment" {
   scope        = [nsxt_policy_group.vcf01_m01.path]
   sequence_number = 3
 
+  rule {
+    display_name       = "VCF01 Management Domain Intra-Environment"
+    source_groups      = [nsxt_policy_group.vcf01_m01.path]
+    destination_groups = [nsxt_policy_group.vcf01_m01.path]
+    action             = "JUMP_TO_APPLICATION"
+    logged             = false
+  } 
+  
   rule {
     display_name       = "VCF Fleet Management to VCF01 Management Domain"
     source_groups      = [nsxt_policy_group.vcf_fm.path]
@@ -189,6 +206,15 @@ resource "nsxt_policy_security_policy" "vcf01_m01_environment" {
   }
   
   rule {
+    display_name       = "VCF01 Management Domain to VCF Management Services"
+    source_groups      = [nsxt_policy_group.vcf01_m01.path]
+    destination_groups = [nsxt_policy_group.vcf01_msvc.path]
+    services           = [data.nsxt_policy_service.https.path,nsxt_policy_service.tcp_4505_4506.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+  
+  rule {
     display_name       = "VCF01 Management Domain to VCF Ops for Net"
     source_groups      = [nsxt_policy_group.vcf01_m01.path]
     destination_groups = [nsxt_policy_group.vcf01_ops_net_cn.path]
@@ -196,14 +222,6 @@ resource "nsxt_policy_security_policy" "vcf01_m01_environment" {
     action             = "ALLOW"
     logged             = false
   }
-
-  rule {
-    display_name       = "VCF01 Management Domain Intra-Environment"
-    source_groups      = [nsxt_policy_group.vcf01_m01.path]
-    destination_groups = [nsxt_policy_group.vcf01_m01.path]
-    action             = "JUMP_TO_APPLICATION"
-    logged             = false
-  } 
 
   rule {
     display_name       = "Lock Down"
@@ -223,6 +241,14 @@ resource "nsxt_policy_security_policy" "vcf01_w01_environment" {
   scope        = [nsxt_policy_group.vcf01_w01.path]
   sequence_number = 4
 
+  rule {
+    display_name       = "VCF01 Workload Domain 01 Intra-Environment"
+    source_groups      = [nsxt_policy_group.vcf01_w01.path]
+    destination_groups = [nsxt_policy_group.vcf01_w01.path]
+    action             = "JUMP_TO_APPLICATION"
+    logged             = false
+  }
+  
   rule {
     display_name       = "VCF Fleet Management to VCF01 Workload Domain 01"
     source_groups      = [nsxt_policy_group.vcf_fm.path]
@@ -251,6 +277,15 @@ resource "nsxt_policy_security_policy" "vcf01_w01_environment" {
   }
   
   rule {
+    display_name       = "VCF01 Workload Domain to VCF Management Services"
+    source_groups      = [nsxt_policy_group.vcf01_w01.path]
+    destination_groups = [nsxt_policy_group.vcf01_msvc.path]
+    services           = [data.nsxt_policy_service.https.path,nsxt_policy_service.tcp_4505_4506.path]
+    action             = "ALLOW"
+    logged             = false
+  }
+  
+  rule {
     display_name       = "VCF01 Workload Domain 01 to VCF Ops for Net"
     source_groups      = [nsxt_policy_group.vcf01_w01.path]
     destination_groups = [nsxt_policy_group.vcf01_ops_net_cn.path]
@@ -258,14 +293,6 @@ resource "nsxt_policy_security_policy" "vcf01_w01_environment" {
     action             = "ALLOW"
     logged             = false
   }
-
-  rule {
-    display_name       = "VCF01 Workload Domain 01 Intra-Environment"
-    source_groups      = [nsxt_policy_group.vcf01_w01.path]
-    destination_groups = [nsxt_policy_group.vcf01_w01.path]
-    action             = "JUMP_TO_APPLICATION"
-    logged             = false
-  } 
 
   rule {
     display_name       = "Lock Down"
