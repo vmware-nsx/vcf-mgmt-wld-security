@@ -287,7 +287,7 @@ resource "nsxt_policy_service" "tcp_6443" {
 }
 
 resource "nsxt_policy_service" "tcp_5000" {
-  description  = "vSphere Supervizor"
+  description  = "vSphere Supervisor"
   display_name = "TCP-5000"
 
   l4_port_set_entry {

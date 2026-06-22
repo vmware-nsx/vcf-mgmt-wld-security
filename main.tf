@@ -1,4 +1,4 @@
-# Terrafrom Initialization
+# Terraform Initialization
 terraform {
   required_providers {
     nsxt = {

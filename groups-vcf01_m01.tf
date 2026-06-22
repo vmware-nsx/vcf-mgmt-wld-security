@@ -268,14 +268,14 @@ resource "nsxt_policy_group" "vcf01_m01" {
 
   criteria {
     condition {
-	  member_type = "Group"
-	  key         = "GroupType"
-	  operator    = "EQUALS"
+      member_type = "Group"
+      key         = "GroupType"
+      operator    = "EQUALS"
       value       = "IPAddress"
     }
     condition {
       member_type = "Group"
-	  key         = "Tag"
+      key         = "Tag"
       operator    = "EQUALS"
       value       = "m01|"
     }
