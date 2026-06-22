@@ -1,6 +1,6 @@
-# VCF Management & Workload Domain Security with VMware vDefend
+# Securing the VMware Cloud Foundation management domain with VMware vDefend
 
-Terraform configuration to automate the deployment of vDefend Distributed Firewall (DFW) policies that secure VMware Cloud Foundation (VCF) management and workload domain components including SDDC Manager, vCenter Servers, NSX Managers, NSX ALB Controllers, and ESXi hosts.
+Terraform configuration to automate the deployment of vDefend Distributed Firewall (DFW) policies that secure VMware Cloud Foundation (VCF) management components, including VCF Fleet, VCF Fleet management service, SDDC Manager, vCenter Servers, NSX Managers, vDefend Security Services Platfrom, Avi Load Balancer, etc.
 
 ## Disclaimer
 
