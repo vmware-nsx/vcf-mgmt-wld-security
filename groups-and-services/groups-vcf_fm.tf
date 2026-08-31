@@ -26,6 +26,10 @@ data "nsxt_policy_vm" "vm8" {
   display_name = var.sddc
 }
 
+data "nsxt_policy_vm" "vm25" {
+  display_name = var.vcf_lhub
+}
+
 resource "nsxt_policy_vm_tags" "vm1_tags" {
   instance_id = data.nsxt_policy_vm.vm1.id
 
@@ -89,6 +93,15 @@ resource "nsxt_policy_vm_tags" "vm8_tags" {
   }
 }
 
+resource "nsxt_policy_vm_tags" "vm25_tags" {
+  instance_id = data.nsxt_policy_vm.vm25.id
+
+  tag {
+    scope = "vcf_fm"
+    tag   = "vcf_lhub"
+  }
+}
+
 resource "nsxt_policy_group" "vcf_ops" {
   nsx_id       = "VCF_OPS"
   display_name = "VCF_OPS"
@@ -124,6 +137,19 @@ resource "nsxt_policy_group" "vcf_lic" {
       key         = "Tag"
       operator    = "EQUALS"
       value       = "vcf_fm|vcf_lic"
+    }
+  }
+}
+
+resource "nsxt_policy_group" "vcf_lhub" {
+  nsx_id       = "VCF_LHUB"
+  display_name = "VCF_LHUB"
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key         = "Tag"
+      operator    = "EQUALS"
+      value       = "vcf_fm|vcf_lhub"
     }
   }
 }
@@ -244,23 +270,23 @@ resource "nsxt_policy_group" "vcf_fm" {
   conjunction {
     operator = "OR"
   }
-  
+
   criteria {
     path_expression {
       member_paths = [nsxt_policy_group.vcf_a.path]
     }
   }
-  
+
   conjunction {
     operator = "OR"
   }
-  
+
   criteria {
     path_expression {
       member_paths = [nsxt_policy_group.vcf01_msvc.path]
     }
   }
-  
+
   conjunction {
     operator = "OR"
   }
@@ -273,6 +299,16 @@ resource "nsxt_policy_group" "vcf_fm" {
       value       = "vcf01_m|"
     }
   }
+
+  conjunction {
+    operator = "OR"
+  }
+
+  criteria {
+    path_expression {
+      member_paths = [nsxt_policy_group.vcf01_sspi.path]
+    }
+  }
 }
 
 resource "nsxt_policy_group" "vcf_f" {
@@ -281,7 +317,7 @@ resource "nsxt_policy_group" "vcf_f" {
 
   criteria {
     path_expression {
-      member_paths = [nsxt_policy_group.vcf_fm.path,nsxt_policy_group.vcf01_m01.path,nsxt_policy_group.vcf01_w01.path]
+      member_paths = [nsxt_policy_group.vcf_fm.path, nsxt_policy_group.vcf01_m01.path, nsxt_policy_group.vcf01_w01.path]
     }
   }
 }

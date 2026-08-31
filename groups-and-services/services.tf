@@ -6,22 +6,6 @@ data "nsxt_policy_service" "icmp_echo" {
   display_name = "ICMP Echo Request"
 }
 
-data "nsxt_policy_service" "dns_tcp" {
-  display_name = "DNS-TCP"
-}
-
-data "nsxt_policy_service" "dns_udp" {
-  display_name = "DNS-UDP"
-}
-
-data "nsxt_policy_service" "activdir" {
-  display_name = "Microsoft Active Directory V1"
-}
-
-data "nsxt_policy_service" "dhcp_server" {
-  display_name = "DHCP-Server"
-}
-
 data "nsxt_policy_service" "https" {
   display_name = "HTTPS"
 }
@@ -46,20 +30,8 @@ data "nsxt_policy_service" "ssh" {
   display_name = "SSH"
 }
 
-data "nsxt_policy_service" "syslog_udp" {
-  display_name = "Syslog (UDP)"
-}
-
-data "nsxt_policy_service" "syslog_tcp" {
-  display_name = "Syslog (TCP)"
-}
-
 data "nsxt_policy_service" "snmp" {
   display_name = "SNMP"
-}
-
-data "nsxt_policy_service" "ntp" {
-  display_name = "NTP"
 }
 
 data "nsxt_policy_service" "rdp" {
@@ -110,10 +82,6 @@ data "nsxt_policy_context_profile" "cxt_ldap" {
   display_name = "LDAP"
 }
 
-data "nsxt_policy_context_profile" "cxt_dns" {
-  display_name = "DNS"
-}
-
 data "nsxt_policy_context_profile" "cxt_ssl" {
   display_name = "SSL"
 }
@@ -162,7 +130,7 @@ resource "nsxt_policy_service" "tcp_6501_6502" {
 
   l4_port_set_entry {
     protocol          = "TCP"
-    destination_ports = ["6501","6502"]
+    destination_ports = ["6501", "6502"]
   }
 }
 
@@ -172,7 +140,7 @@ resource "nsxt_policy_service" "tcp_7475_7476" {
 
   l4_port_set_entry {
     protocol          = "TCP"
-    destination_ports = ["7475","7476"]
+    destination_ports = ["7475", "7476"]
   }
 }
 
@@ -182,7 +150,7 @@ resource "nsxt_policy_service" "tcp_1234_1235" {
 
   l4_port_set_entry {
     protocol          = "TCP"
-    destination_ports = ["1234","1235"]
+    destination_ports = ["1234", "1235"]
   }
 }
 
@@ -236,16 +204,6 @@ resource "nsxt_policy_service" "tcp_8443" {
   }
 }
 
-resource "nsxt_policy_service" "tcp_9543" {
-  description  = "Aria Suite LCM"
-  display_name = "TCP-9543"
-
-  l4_port_set_entry {
-    protocol          = "TCP"
-    destination_ports = ["9543"]
-  }
-}
-
 resource "nsxt_policy_service" "tcp_16520" {
   description  = "Aria Suite LCM"
   display_name = "TCP-16520"
@@ -253,6 +211,16 @@ resource "nsxt_policy_service" "tcp_16520" {
   l4_port_set_entry {
     protocol          = "TCP"
     destination_ports = ["16520"]
+  }
+}
+
+resource "nsxt_policy_service" "tcp_9543" {
+  description  = "Aria Suite LCM"
+  display_name = "TCP-9543"
+
+  l4_port_set_entry {
+    protocol          = "TCP"
+    destination_ports = ["9543"]
   }
 }
 
@@ -303,6 +271,26 @@ resource "nsxt_policy_service" "tcp_9092" {
   l4_port_set_entry {
     protocol          = "TCP"
     destination_ports = ["9092"]
+  }
+}
+
+resource "nsxt_policy_service" "tcp_3260" {
+  description  = "iSCSI"
+  display_name = "TCP-3260"
+
+  l4_port_set_entry {
+    protocol          = "TCP"
+    destination_ports = ["3260"]
+  }
+}
+
+resource "nsxt_policy_service" "tcp_2049" {
+  description  = "NFS"
+  display_name = "TCP-2049"
+
+  l4_port_set_entry {
+    protocol          = "TCP"
+    destination_ports = ["2049"]
   }
 }
 
@@ -375,7 +363,7 @@ resource "nsxt_policy_context_profile" "internet_fqdns" {
   display_name = "INTERNET_FQDNS"
   description  = "VCF upgrade and patch binaries"
   domain_name {
-     value       = ["*.broadcom.com", "*.vmware.com", "*.broadcom.net"]
+    value = ["*.broadcom.com", "*.vmware.com", "*.broadcom.net"]
   }
-  depends_on = [nsxt_policy_context_profile_custom_attribute.custom_fqdn1,nsxt_policy_context_profile_custom_attribute.custom_fqdn2,nsxt_policy_context_profile_custom_attribute.custom_fqdn3]
+  depends_on = [nsxt_policy_context_profile_custom_attribute.custom_fqdn1, nsxt_policy_context_profile_custom_attribute.custom_fqdn2, nsxt_policy_context_profile_custom_attribute.custom_fqdn3]
 }

@@ -95,6 +95,11 @@ variable "vcf_lic" {
   description = "VCF License Server VM name"
 }
 
+variable "vcf_lhub" {
+  type        = string
+  description = "vDefend License Hub VM name"
+}
+
 variable "sddc" {
   type        = string
   description = "SDDC Manager VM name"

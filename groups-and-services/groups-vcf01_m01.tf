@@ -108,19 +108,9 @@ resource "nsxt_policy_group" "m01_nsx" {
   criteria {
     condition {
       member_type = "VirtualMachine"
-      key         = "Tag"
-      operator    = "EQUALS"
-      value       = "m01|nsx01"
-    }
-  }
-
-  conjunction {
-    operator = "OR"
-  }
-
-  criteria {
-    ipaddress_expression {
-      ip_addresses = ["172.16.10.50-172.16.10.51"]
+      key         = "Name"
+      operator    = "STARTSWITH"
+      value       = var.m01_nsx_manager_a
     }
   }
 }
@@ -131,9 +121,9 @@ resource "nsxt_policy_group" "m01_avi" {
   criteria {
     condition {
       member_type = "VirtualMachine"
-      key         = "Tag"
-      operator    = "EQUALS"
-      value       = "m01|avi01"
+      key         = "Name"
+      operator    = "STARTSWITH"
+      value       = var.m01_avi_controller_a
     }
   }
 }
@@ -142,15 +132,15 @@ resource "nsxt_policy_group" "m01_avi_se" {
   nsx_id       = "M01_AVI_SE"
   display_name = "M01_AVI_SE"
   group_type   = "IPAddress"
-  
+
   tag {
     scope = "m01"
     tag   = "avi_se"
   }
-  
+
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.22.11-172.16.22.100"]
+      ip_addresses = ["10.255.240.0/24"]
     }
   }
 }
@@ -159,7 +149,7 @@ resource "nsxt_policy_group" "m01_edges" {
   nsx_id       = "M01_EDGES"
   display_name = "M01_EDGES"
   group_type   = "IPAddress"
-  
+
   tag {
     scope = "m01"
     tag   = "edges"
@@ -204,10 +194,10 @@ resource "nsxt_policy_vm_tags" "vm16_tags" {
   }
 }
 
-resource "nsxt_policy_group" "m01_sspi" {
-  nsx_id       = "M01_SSPI"
-  display_name = "M01_SSPI"
-  
+resource "nsxt_policy_group" "vcf01_sspi" {
+  nsx_id       = "VCF01_SSPI"
+  display_name = "VCF01_SSPI"
+
   criteria {
     condition {
       member_type = "VirtualMachine"
@@ -241,7 +231,7 @@ resource "nsxt_policy_group" "m01_sspm" {
     scope = "m01"
     tag   = "sspm"
   }
-  
+
   criteria {
     ipaddress_expression {
       ip_addresses = [var.m01_sspm]
@@ -280,14 +270,14 @@ resource "nsxt_policy_group" "vcf01_m01" {
       value       = "m01|"
     }
   }
-  
+
   conjunction {
     operator = "OR"
   }
 
   criteria {
     path_expression {
-      member_paths = [nsxt_policy_group.m01_vc.path,nsxt_policy_group.m01_ssp.path]
+      member_paths = [nsxt_policy_group.m01_vc.path, nsxt_policy_group.m01_ssp.path]
     }
   }
 }
