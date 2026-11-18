@@ -1,0 +1,77 @@
+# Example values for the VCF management security configuration.
+#
+#   cp terraform.tfvars.example terraform.tfvars   # terraform.tfvars is git-ignored
+#
+# NSX Manager credentials are deliberately NOT set in a tfvars file, because values in a tfvars file
+# override TF_VAR_* variables. Provide them through the environment:
+#   export TF_VAR_nsx_manager=<nsx manager cluster vip fqdn or IP>
+#   export TF_VAR_nsx_username=<nsx manager enterprise administrator name>
+#   export TF_VAR_nsx_password=<nsx manager enterprise administrator password>
+#
+# Keep certificate verification on in production. Set this to true only for a lab that uses
+# self-signed certificates:
+nsx_allow_unverified_ssl = false
+
+# Services outside the VCF fleet (IPv4 addresses).
+external_services = {
+  dns_server    = "192.168.110.10"
+  ntp_server    = "192.168.110.1"
+  dhcp_server   = "192.168.110.10"
+  ad_server     = "192.168.110.10"
+  smtp_server   = "192.168.110.1"
+  bastion_host  = "192.168.110.10"
+  tools_server  = "192.168.110.11"
+  backup_server = "192.168.110.11"
+
+  # Optional external syslog collector. Creates the SYSLOG_SVC group used by the Syslog rule; null to skip it.
+  syslog_server = "192.168.110.11"
+}
+
+# VCF Fleet Management components (VM names; vcfmsvc and vcfa are name prefixes).
+fleet = {
+  vcfops01    = "vcfops01"
+  vcfmsvc     = "vcfsvc-"
+  vcfa        = "vcfa-"
+  vcfa_vip    = "172.16.10.28"
+  vcf_lic     = "license01"
+  vcf_lhub    = "m01-lh01"
+  vcf_lhub_ip = "172.16.10.91"
+  sddc        = "sddcmgr"
+  vcfops_cp   = "vcfopscp"
+  sspi        = "vcf01-sspi"
+
+  # VCF Operations for Networks. Set to null if it is not deployed.
+  ops_net = {
+    platform  = "vrni-platform"
+    collector = "vrni-collector"
+  }
+}
+
+# Management domain. nsx_managers and avi_controllers list one VM name per node (1 to 3).
+m01 = {
+  vcenter         = "m01-vc01"
+  nsx_managers    = ["m01-nsx01a", "m01-nsx01b", "m01-nsx01c"]
+  avi_controllers = ["m01-avi01-node0", "m01-avi01-node1", "m01-avi01-node2"]
+  edges           = "172.16.10.61-172.16.10.64"
+  hosts           = "172.16.11.11-172.16.11.14"
+  avi_se_mgmt     = "192.168.4.0/25"
+  ssp_svc         = "172.16.21.2-172.16.21.33"
+}
+
+# Workload domain 01.
+w01 = {
+  vcenter         = "w01-vc01"
+  nsx_managers    = ["w01-nsx01a", "w01-nsx01b", "w01-nsx01c"]
+  avi_controllers = ["w01-avi01a", "w01-avi01b", "w01-avi01c"] # [] if Avi is not deployed
+  edges           = "172.16.10.71-172.16.10.74"
+  hosts           = "172.16.11.15-172.16.11.17"
+  avi_se_mgmt     = "172.16.23.11-172.16.23.100"
+  sup01           = "172.16.10.101-172.16.10.110"
+
+  # Security Services Platform on w01. Leave null until SSP is deployed there.
+  ssp = null
+  # ssp = {
+  #   sspi_vm = "w01-sspi"
+  #   ssp_svc = "172.16.21.65-172.16.21.126"
+  # }
+}

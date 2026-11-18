@@ -1,0 +1,23 @@
+# Optional local checks:  pip install pre-commit && pre-commit install
+# They run the same commands as .github/workflows/terraform.yml and need only terraform and python3.
+repos:
+  - repo: local
+    hooks:
+      - id: terraform-fmt
+        name: terraform fmt
+        entry: terraform fmt -check -recursive
+        language: system
+        pass_filenames: false
+        files: \.(tf|tfvars)$
+      - id: terraform-validate
+        name: terraform validate
+        entry: bash -c 'terraform init -backend=false -input=false >/dev/null && terraform validate'
+        language: system
+        pass_filenames: false
+        files: \.tf$
+      - id: discover-tfvars-tests
+        name: discover-tfvars unit tests
+        entry: python3 -m unittest discover -s scripts
+        language: system
+        pass_filenames: false
+        files: ^scripts/

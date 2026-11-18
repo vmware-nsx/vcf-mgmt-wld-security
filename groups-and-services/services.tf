@@ -1,109 +1,3 @@
-data "nsxt_policy_service" "icmp_all" {
-  display_name = "ICMP ALL"
-}
-
-data "nsxt_policy_service" "icmp_echo" {
-  display_name = "ICMP Echo Request"
-}
-
-data "nsxt_policy_service" "https" {
-  display_name = "HTTPS"
-}
-
-data "nsxt_policy_service" "http" {
-  display_name = "HTTP"
-}
-
-data "nsxt_policy_service" "ldap" {
-  display_name = "LDAP"
-}
-
-data "nsxt_policy_service" "ldap_udp" {
-  display_name = "LDAP-UDP"
-}
-
-data "nsxt_policy_service" "ldaps" {
-  display_name = "LDAP-over-SSL"
-}
-
-data "nsxt_policy_service" "ssh" {
-  display_name = "SSH"
-}
-
-data "nsxt_policy_service" "snmp" {
-  display_name = "SNMP"
-}
-
-data "nsxt_policy_service" "rdp" {
-  display_name = "RDP"
-}
-
-data "nsxt_policy_service" "update_manager" {
-  display_name = "Update Manager"
-}
-
-#data "nsxt_policy_service" "tcp_902" {
-#  display_name = "VMware-ESXi5.x-TCP"
-#}
-
-data "nsxt_policy_service" "udp_902" {
-  display_name = "VMware-ESXi5.x-UDP"
-}
-
-#data "nsxt_policy_service" "tcp_9000_9100" {
-#  display_name = "VMware-UpdateMgr"
-#}
-
-data "nsxt_policy_service" "tcp_9087" {
-  display_name = "Vmware-UpdateMgr-update"
-}
-
-data "nsxt_policy_service" "tcp_9084" {
-  display_name = "VMware-UpdateMgr-VUM"
-}
-
-data "nsxt_policy_service" "ftp" {
-  display_name = "FTP"
-}
-
-data "nsxt_policy_service" "smtp" {
-  display_name = "SMTP"
-}
-
-data "nsxt_policy_service" "smtp_tls" {
-  display_name = "SMTP_TLS"
-}
-
-data "nsxt_policy_context_profile" "cxt_activdir" {
-  display_name = "ACTIVDIR"
-}
-
-data "nsxt_policy_context_profile" "cxt_ldap" {
-  display_name = "LDAP"
-}
-
-data "nsxt_policy_context_profile" "cxt_ssl" {
-  display_name = "SSL"
-}
-
-data "nsxt_policy_context_profile" "cxt_dcerpc" {
-  display_name = "DCERPC"
-}
-
-data "nsxt_policy_context_profile" "cxt_ssh" {
-  display_name = "SSH"
-}
-
-resource "nsxt_policy_service" "tcp_2012_2020" {
-  description  = "ELM ports service provisioned by Terraform"
-  display_name = "TCP-2012_2020"
-
-  l4_port_set_entry {
-    protocol          = "TCP"
-    destination_ports = ["2012", "2020"]
-  }
-}
-
 resource "nsxt_policy_service" "tcp_5480" {
   description  = "Workload Domain Deployment"
   display_name = "TCP-5480"
@@ -164,36 +58,6 @@ resource "nsxt_policy_service" "tcp_5671" {
   }
 }
 
-resource "nsxt_policy_service" "tcp_9040" {
-  description  = "NSX Distributed Datastore"
-  display_name = "TCP-9040"
-
-  l4_port_set_entry {
-    protocol          = "TCP"
-    destination_ports = ["9040"]
-  }
-}
-
-resource "nsxt_policy_service" "tcp_9000" {
-  description  = "NSX Distributed Datastore"
-  display_name = "TCP-9000"
-
-  l4_port_set_entry {
-    protocol          = "TCP"
-    destination_ports = ["9000"]
-  }
-}
-
-resource "nsxt_policy_service" "tcp_5432" {
-  description  = "vCenter RDU"
-  display_name = "TCP-5432"
-
-  l4_port_set_entry {
-    protocol          = "TCP"
-    destination_ports = ["5432"]
-  }
-}
-
 resource "nsxt_policy_service" "tcp_8443" {
   description  = "Aria Suite LCM"
   display_name = "TCP-8443"
@@ -201,16 +65,6 @@ resource "nsxt_policy_service" "tcp_8443" {
   l4_port_set_entry {
     protocol          = "TCP"
     destination_ports = ["8443"]
-  }
-}
-
-resource "nsxt_policy_service" "tcp_16520" {
-  description  = "Aria Suite LCM"
-  display_name = "TCP-16520"
-
-  l4_port_set_entry {
-    protocol          = "TCP"
-    destination_ports = ["16520"]
   }
 }
 
@@ -234,16 +88,6 @@ resource "nsxt_policy_service" "tcp_1514" {
   }
 }
 
-resource "nsxt_policy_service" "tcp_6514" {
-  description  = "Aria Operations for Logs"
-  display_name = "TCP-6514"
-
-  l4_port_set_entry {
-    protocol          = "TCP"
-    destination_ports = ["6514"]
-  }
-}
-
 resource "nsxt_policy_service" "tcp_6443" {
   description  = "Kubernetes API"
   display_name = "TCP-6443"
@@ -251,16 +95,6 @@ resource "nsxt_policy_service" "tcp_6443" {
   l4_port_set_entry {
     protocol          = "TCP"
     destination_ports = ["6443"]
-  }
-}
-
-resource "nsxt_policy_service" "tcp_5000" {
-  description  = "vSphere Supervisor"
-  display_name = "TCP-5000"
-
-  l4_port_set_entry {
-    protocol          = "TCP"
-    destination_ports = ["5000"]
   }
 }
 
@@ -335,12 +169,19 @@ resource "nsxt_policy_service" "tcp_1443" {
 }
 
 resource "nsxt_policy_service" "tcp_4505_4506" {
-  description  = "VCF Management Service"
-  display_name = "TCP-4505-4506"
+  nsx_id       = "TCP-4505_4506"
+  display_name = "TCP-4505_4506"
 
   l4_port_set_entry {
+    display_name      = "TCP-4505_4506"
     protocol          = "TCP"
     destination_ports = ["4505-4506"]
+  }
+
+  # nsx_id forces replacement. NSX refuses to delete a service that rules
+  # still reference, so create the new one first and let the rules move to it.
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -359,11 +200,24 @@ resource "nsxt_policy_context_profile_custom_attribute" "custom_fqdn3" {
   attribute = "*.broadcom.net"
 }
 
+# NSX removes a context profile asynchronously and refuses to delete the custom FQDN attributes
+# while it still lists the profile as a user (error 521033). On destroy, Terraform deletes the
+# profile first, waits here, and only then deletes the attributes. Creation is not delayed.
+resource "time_sleep" "context_profile_destroy_delay" {
+  destroy_duration = "30s"
+
+  depends_on = [
+    nsxt_policy_context_profile_custom_attribute.custom_fqdn1,
+    nsxt_policy_context_profile_custom_attribute.custom_fqdn2,
+    nsxt_policy_context_profile_custom_attribute.custom_fqdn3,
+  ]
+}
+
 resource "nsxt_policy_context_profile" "internet_fqdns" {
   display_name = "INTERNET_FQDNS"
   description  = "VCF upgrade and patch binaries"
   domain_name {
     value = ["*.broadcom.com", "*.vmware.com", "*.broadcom.net"]
   }
-  depends_on = [nsxt_policy_context_profile_custom_attribute.custom_fqdn1, nsxt_policy_context_profile_custom_attribute.custom_fqdn2, nsxt_policy_context_profile_custom_attribute.custom_fqdn3]
+  depends_on = [time_sleep.context_profile_destroy_delay]
 }

@@ -1,37 +1,40 @@
-data "nsxt_policy_vm" "vm1" {
-  display_name = var.vcfops01
+data "nsxt_policy_vm" "vcfops01" {
+  display_name = var.fleet.vcfops01
 }
 
-data "nsxt_policy_vm" "vm2" {
-  display_name = var.vcf_lic
+data "nsxt_policy_vm" "vcf_lic" {
+  display_name = var.fleet.vcf_lic
 }
 
-#data "nsxt_policy_vm" "vm3" {
-#  display_name = var.vcfops_logs
-#}
-
-#data "nsxt_policy_vm" "vm4" {
-#  display_name = var.vcfops_net
-#}
-
-data "nsxt_policy_vm" "vm6" {
-  display_name = var.vcfops_cp
+data "nsxt_policy_vm" "vcfops_cp" {
+  display_name = var.fleet.vcfops_cp
 }
 
-#data "nsxt_policy_vm" "vm7" {
-#  display_name = var.vcfops_net_cn
-#}
-
-data "nsxt_policy_vm" "vm8" {
-  display_name = var.sddc
+data "nsxt_policy_vm" "sddc" {
+  display_name = var.fleet.sddc
 }
 
-data "nsxt_policy_vm" "vm25" {
-  display_name = var.vcf_lhub
+data "nsxt_policy_vm" "vcf_lhub" {
+  display_name = var.fleet.vcf_lhub
 }
 
-resource "nsxt_policy_vm_tags" "vm1_tags" {
-  instance_id = data.nsxt_policy_vm.vm1.id
+data "nsxt_policy_vm" "sspi" {
+  display_name = var.fleet.sspi
+}
+
+# VCF Operations for Networks is optional: these are created only when var.fleet.ops_net is set.
+data "nsxt_policy_vm" "ops_net_platform" {
+  count        = var.fleet.ops_net != null ? 1 : 0
+  display_name = var.fleet.ops_net.platform
+}
+
+data "nsxt_policy_vm" "ops_net_collector" {
+  count        = var.fleet.ops_net != null ? 1 : 0
+  display_name = var.fleet.ops_net.collector
+}
+
+resource "nsxt_policy_vm_tags" "vcfops01" {
+  instance_id = data.nsxt_policy_vm.vcfops01.id
 
   tag {
     scope = "vcf_fm"
@@ -39,8 +42,8 @@ resource "nsxt_policy_vm_tags" "vm1_tags" {
   }
 }
 
-resource "nsxt_policy_vm_tags" "vm2_tags" {
-  instance_id = data.nsxt_policy_vm.vm2.id
+resource "nsxt_policy_vm_tags" "vcf_lic" {
+  instance_id = data.nsxt_policy_vm.vcf_lic.id
 
   tag {
     scope = "vcf_fm"
@@ -48,26 +51,8 @@ resource "nsxt_policy_vm_tags" "vm2_tags" {
   }
 }
 
-#resource "nsxt_policy_vm_tags" "vm3_tags" {
-#  instance_id = data.nsxt_policy_vm.vm3.id
-#
-#  tag {
-#    scope = "vcf_fm"
-#    tag   = "ops_log"
-#  }
-#}
-
-#resource "nsxt_policy_vm_tags" "vm4_tags" {
-#  instance_id = data.nsxt_policy_vm.vm4.id
-#
-#  tag {
-#    scope = "vcf_fm"
-#    tag   = "ops_net"
-#  }
-#}
-
-resource "nsxt_policy_vm_tags" "vm6_tags" {
-  instance_id = data.nsxt_policy_vm.vm6.id
+resource "nsxt_policy_vm_tags" "vcfops_cp" {
+  instance_id = data.nsxt_policy_vm.vcfops_cp.id
 
   tag {
     scope = "vcf01_m"
@@ -75,17 +60,8 @@ resource "nsxt_policy_vm_tags" "vm6_tags" {
   }
 }
 
-#resource "nsxt_policy_vm_tags" "vm7_tags" {
-#  instance_id = data.nsxt_policy_vm.vm7.id
-#
-#  tag {
-#    scope = "vcf01_m"
-#    tag   = "ops_net_cn"
-#  }
-#}
-
-resource "nsxt_policy_vm_tags" "vm8_tags" {
-  instance_id = data.nsxt_policy_vm.vm8.id
+resource "nsxt_policy_vm_tags" "sddc" {
+  instance_id = data.nsxt_policy_vm.sddc.id
 
   tag {
     scope = "vcf01_m"
@@ -93,12 +69,41 @@ resource "nsxt_policy_vm_tags" "vm8_tags" {
   }
 }
 
-resource "nsxt_policy_vm_tags" "vm25_tags" {
-  instance_id = data.nsxt_policy_vm.vm25.id
+resource "nsxt_policy_vm_tags" "vcf_lhub" {
+  instance_id = data.nsxt_policy_vm.vcf_lhub.id
 
   tag {
     scope = "vcf_fm"
     tag   = "vcf_lhub"
+  }
+}
+
+resource "nsxt_policy_vm_tags" "sspi" {
+  instance_id = data.nsxt_policy_vm.sspi.id
+
+  tag {
+    scope = "vcf_fm"
+    tag   = "sspi"
+  }
+}
+
+resource "nsxt_policy_vm_tags" "ops_net_platform" {
+  count       = var.fleet.ops_net != null ? 1 : 0
+  instance_id = data.nsxt_policy_vm.ops_net_platform[0].id
+
+  tag {
+    scope = "vcf_fm"
+    tag   = "ops_net"
+  }
+}
+
+resource "nsxt_policy_vm_tags" "ops_net_collector" {
+  count       = var.fleet.ops_net != null ? 1 : 0
+  instance_id = data.nsxt_policy_vm.ops_net_collector[0].id
+
+  tag {
+    scope = "vcf01_m"
+    tag   = "ops_net_cn"
   }
 }
 
@@ -152,30 +157,14 @@ resource "nsxt_policy_group" "vcf_lhub" {
       value       = "vcf_fm|vcf_lhub"
     }
   }
-}
 
-resource "nsxt_policy_group" "vcf_ops_fm" {
-  nsx_id       = "VCF_OPS_FM"
-  display_name = "VCF_OPS_FM"
-  criteria {
-    condition {
-      member_type = "VirtualMachine"
-      key         = "Tag"
-      operator    = "EQUALS"
-      value       = "vcf_fm|ops_fm"
-    }
+  conjunction {
+    operator = "OR"
   }
-}
 
-resource "nsxt_policy_group" "vcf_ops_logs" {
-  nsx_id       = "VCF_OPS_LOGS"
-  display_name = "VCF_OPS_LOGS"
   criteria {
-    condition {
-      member_type = "VirtualMachine"
-      key         = "Tag"
-      operator    = "EQUALS"
-      value       = "vcf_fm|ops_log"
+    ipaddress_expression {
+      ip_addresses = [var.fleet.vcf_lhub_ip]
     }
   }
 }
@@ -214,7 +203,7 @@ resource "nsxt_policy_group" "vcf01_msvc" {
       member_type = "VirtualMachine"
       key         = "Name"
       operator    = "STARTSWITH"
-      value       = var.vcfmsvc
+      value       = var.fleet.vcfmsvc
     }
   }
 }
@@ -227,7 +216,7 @@ resource "nsxt_policy_group" "vcf_a" {
       member_type = "VirtualMachine"
       key         = "Name"
       operator    = "STARTSWITH"
-      value       = var.vcfa
+      value       = var.fleet.vcfa
     }
   }
 }
@@ -248,9 +237,24 @@ resource "nsxt_policy_group" "vcf01_sddc" {
 resource "nsxt_policy_group" "vcf_a_lb" {
   nsx_id       = "VCF_A_LB"
   display_name = "VCF_A_LB"
+  group_type   = "IPAddress"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["172.16.10.26"]
+      ip_addresses = [var.fleet.vcfa_vip]
+    }
+  }
+}
+
+resource "nsxt_policy_group" "vcf01_sspi" {
+  nsx_id       = "VCF01_SSPI"
+  display_name = "VCF01_SSPI"
+
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key         = "Tag"
+      operator    = "EQUALS"
+      value       = "vcf_fm|sspi"
     }
   }
 }
@@ -311,7 +315,7 @@ resource "nsxt_policy_group" "vcf_fm" {
   }
 }
 
-resource "nsxt_policy_group" "vcf_f" {
+resource "nsxt_policy_group" "vcf_fleet" {
   nsx_id       = "VCF_FLEET"
   display_name = "VCF_FLEET"
 

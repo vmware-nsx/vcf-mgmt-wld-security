@@ -5,7 +5,7 @@ resource "nsxt_policy_group" "dns_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.dns_server]
+      ip_addresses = [var.external_services.dns_server]
     }
   }
 }
@@ -17,7 +17,7 @@ resource "nsxt_policy_group" "ntp_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.ntp_server]
+      ip_addresses = [var.external_services.ntp_server]
     }
   }
 }
@@ -29,7 +29,7 @@ resource "nsxt_policy_group" "dhcp_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.dhcp_server]
+      ip_addresses = [var.external_services.dhcp_server]
     }
   }
 }
@@ -41,7 +41,7 @@ resource "nsxt_policy_group" "ad_svc" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.ad_server]
+      ip_addresses = [var.external_services.ad_server]
     }
   }
 }

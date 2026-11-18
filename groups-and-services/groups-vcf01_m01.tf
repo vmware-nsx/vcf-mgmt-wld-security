@@ -1,33 +1,19 @@
-data "nsxt_policy_vm" "vm9" {
-  display_name = var.m01_vcenter
+data "nsxt_policy_vm" "m01_vcenter" {
+  display_name = var.m01.vcenter
 }
 
-data "nsxt_policy_vm" "vm10" {
-  display_name = var.m01_nsx_manager_a
+data "nsxt_policy_vm" "m01_nsx_manager" {
+  for_each     = toset(var.m01.nsx_managers)
+  display_name = each.value
 }
 
-#data "nsxt_policy_vm" "vm11" {
-#  display_name = var.m01_nsx_manager_b
-#}
-
-#data "nsxt_policy_vm" "vm12" {
-#  display_name = var.m01_nsx_manager_c
-#}
-
-data "nsxt_policy_vm" "vm13" {
-  display_name = var.m01_avi_controller_a
+data "nsxt_policy_vm" "m01_avi_controller" {
+  for_each     = toset(var.m01.avi_controllers)
+  display_name = each.value
 }
 
-#data "nsxt_policy_vm" "vm14" {
-#  display_name = var.m01_avi_controller_b
-#}
-#
-#data "nsxt_policy_vm" "vm15" {
-#  display_name = var.m01_avi_controller_c
-#}
-
-resource "nsxt_policy_vm_tags" "vm9_tags" {
-  instance_id = data.nsxt_policy_vm.vm9.id
+resource "nsxt_policy_vm_tags" "m01_vcenter" {
+  instance_id = data.nsxt_policy_vm.m01_vcenter.id
 
   tag {
     scope = "m01"
@@ -35,8 +21,9 @@ resource "nsxt_policy_vm_tags" "vm9_tags" {
   }
 }
 
-resource "nsxt_policy_vm_tags" "vm10_tags" {
-  instance_id = data.nsxt_policy_vm.vm10.id
+resource "nsxt_policy_vm_tags" "m01_nsx_manager" {
+  for_each    = data.nsxt_policy_vm.m01_nsx_manager
+  instance_id = each.value.id
 
   tag {
     scope = "m01"
@@ -44,50 +31,15 @@ resource "nsxt_policy_vm_tags" "vm10_tags" {
   }
 }
 
-#resource "nsxt_policy_vm_tags" "vm11_tags" {
-#  instance_id = data.nsxt_policy_vm.vm11.id
-#
-#  tag {
-#    scope = "m01"
-#    tag   = "nsx01"
-#  }
-#}
-#
-#resource "nsxt_policy_vm_tags" "vm12_tags" {
-#  instance_id = data.nsxt_policy_vm.vm12.id
-#
-#  tag {
-#    scope = "m01"
-#    tag   = "nsx01"
-#  }
-#}
-
-resource "nsxt_policy_vm_tags" "vm13_tags" {
-  instance_id = data.nsxt_policy_vm.vm13.id
+resource "nsxt_policy_vm_tags" "m01_avi_controller" {
+  for_each    = data.nsxt_policy_vm.m01_avi_controller
+  instance_id = each.value.id
 
   tag {
     scope = "m01"
     tag   = "avi01"
   }
 }
-
-#resource "nsxt_policy_vm_tags" "vm14_tags" {
-#  instance_id = data.nsxt_policy_vm.vm14.id
-#
-#  tag {
-#    scope = "m01"
-#    tag   = "avi01"
-#  }
-#}
-#
-#resource "nsxt_policy_vm_tags" "vm15_tags" {
-#  instance_id = data.nsxt_policy_vm.vm15.id
-#
-#  tag {
-#    scope = "m01"
-#    tag   = "avi01"
-#  }
-#}
 
 resource "nsxt_policy_group" "m01_vc" {
   nsx_id       = "M01_VC"
@@ -97,7 +49,7 @@ resource "nsxt_policy_group" "m01_vc" {
       member_type = "VirtualMachine"
       key         = "Name"
       operator    = "STARTSWITH"
-      value       = var.m01_vcenter
+      value       = var.m01.vcenter
     }
   }
 }
@@ -105,12 +57,24 @@ resource "nsxt_policy_group" "m01_vc" {
 resource "nsxt_policy_group" "m01_nsx" {
   nsx_id       = "M01_NSX"
   display_name = "M01_NSX"
-  criteria {
-    condition {
-      member_type = "VirtualMachine"
-      key         = "Name"
-      operator    = "STARTSWITH"
-      value       = var.m01_nsx_manager_a
+
+  # One name condition per node, OR-ed together. An empty list gives a group without criteria.
+  dynamic "criteria" {
+    for_each = var.m01.nsx_managers
+    content {
+      condition {
+        member_type = "VirtualMachine"
+        key         = "Name"
+        operator    = "STARTSWITH"
+        value       = criteria.value
+      }
+    }
+  }
+
+  dynamic "conjunction" {
+    for_each = length(var.m01.nsx_managers) > 1 ? slice(var.m01.nsx_managers, 1, length(var.m01.nsx_managers)) : []
+    content {
+      operator = "OR"
     }
   }
 }
@@ -118,13 +82,29 @@ resource "nsxt_policy_group" "m01_nsx" {
 resource "nsxt_policy_group" "m01_avi" {
   nsx_id       = "M01_AVI"
   display_name = "M01_AVI"
-  criteria {
-    condition {
-      member_type = "VirtualMachine"
-      key         = "Name"
-      operator    = "STARTSWITH"
-      value       = var.m01_avi_controller_a
+
+  # One name condition per node, OR-ed together. An empty list gives a group without criteria.
+  dynamic "criteria" {
+    for_each = var.m01.avi_controllers
+    content {
+      condition {
+        member_type = "VirtualMachine"
+        key         = "Name"
+        operator    = "STARTSWITH"
+        value       = criteria.value
+      }
     }
+  }
+
+  dynamic "conjunction" {
+    for_each = length(var.m01.avi_controllers) > 1 ? slice(var.m01.avi_controllers, 1, length(var.m01.avi_controllers)) : []
+    content {
+      operator = "OR"
+    }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -133,15 +113,14 @@ resource "nsxt_policy_group" "m01_avi_se" {
   display_name = "M01_AVI_SE"
   group_type   = "IPAddress"
 
-  tag {
-    scope = "m01"
-    tag   = "avi_se"
-  }
-
   criteria {
     ipaddress_expression {
-      ip_addresses = ["10.255.240.0/24"]
+      ip_addresses = [var.m01.avi_se_mgmt]
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -157,7 +136,7 @@ resource "nsxt_policy_group" "m01_edges" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.m01_edges]
+      ip_addresses = [var.m01.edges]
     }
   }
 }
@@ -174,39 +153,12 @@ resource "nsxt_policy_group" "m01_hosts" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.m01_hosts]
+      ip_addresses = [var.m01.hosts]
     }
   }
 }
 
 #Management workload domain SSP
-
-data "nsxt_policy_vm" "vm16" {
-  display_name = var.m01_sspi_vm
-}
-
-resource "nsxt_policy_vm_tags" "vm16_tags" {
-  instance_id = data.nsxt_policy_vm.vm16.id
-
-  tag {
-    scope = "m01"
-    tag   = "sspi"
-  }
-}
-
-resource "nsxt_policy_group" "vcf01_sspi" {
-  nsx_id       = "VCF01_SSPI"
-  display_name = "VCF01_SSPI"
-
-  criteria {
-    condition {
-      member_type = "VirtualMachine"
-      key         = "Tag"
-      operator    = "EQUALS"
-      value       = "m01|sspi"
-    }
-  }
-}
 
 resource "nsxt_policy_group" "m01_ssp" {
   nsx_id       = "M01_SSP"
@@ -222,20 +174,24 @@ resource "nsxt_policy_group" "m01_ssp" {
   }
 }
 
-resource "nsxt_policy_group" "m01_sspm" {
-  nsx_id       = "M01_SSPM"
-  display_name = "M01_SSPM"
+resource "nsxt_policy_group" "m01_ssp_svc" {
+  nsx_id       = "M01_SSP_SVC"
+  display_name = "M01_SSP_SVC"
   group_type   = "IPAddress"
 
   tag {
     scope = "m01"
-    tag   = "sspm"
+    tag   = "ssp_svc"
   }
 
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.m01_sspm]
+      ip_addresses = [var.m01.ssp_svc]
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -277,7 +233,7 @@ resource "nsxt_policy_group" "vcf01_m01" {
 
   criteria {
     path_expression {
-      member_paths = [nsxt_policy_group.m01_vc.path, nsxt_policy_group.m01_ssp.path]
+      member_paths = [nsxt_policy_group.m01_vc.path, nsxt_policy_group.m01_ssp.path, nsxt_policy_group.m01_avi.path, nsxt_policy_group.m01_avi_se.path]
     }
   }
 }
