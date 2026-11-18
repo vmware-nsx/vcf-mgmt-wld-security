@@ -22,10 +22,6 @@ override.tf.json
 # Plan output files
 *.tfplan
 
-# Python
-__pycache__/
-*.pyc
-
 # Local tooling
 .claude/
 

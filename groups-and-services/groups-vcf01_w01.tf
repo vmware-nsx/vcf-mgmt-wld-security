@@ -7,11 +7,6 @@ data "nsxt_policy_vm" "w01_nsx_manager" {
   display_name = each.value
 }
 
-data "nsxt_policy_vm" "w01_avi_controller" {
-  for_each     = toset(var.w01.avi_controllers)
-  display_name = each.value
-}
-
 resource "nsxt_policy_vm_tags" "w01_vcenter" {
   instance_id = data.nsxt_policy_vm.w01_vcenter.id
 
@@ -28,16 +23,6 @@ resource "nsxt_policy_vm_tags" "w01_nsx_manager" {
   tag {
     scope = "w01"
     tag   = "nsx01"
-  }
-}
-
-resource "nsxt_policy_vm_tags" "w01_avi_controller" {
-  for_each    = data.nsxt_policy_vm.w01_avi_controller
-  instance_id = each.value.id
-
-  tag {
-    scope = "w01"
-    tag   = "avi01"
   }
 }
 
@@ -76,50 +61,6 @@ resource "nsxt_policy_group" "w01_nsx" {
     content {
       operator = "OR"
     }
-  }
-}
-
-resource "nsxt_policy_group" "w01_avi" {
-  nsx_id       = "W01_AVI"
-  display_name = "W01_AVI"
-
-  # One name condition per node, OR-ed together. An empty list gives a group without criteria.
-  dynamic "criteria" {
-    for_each = var.w01.avi_controllers
-    content {
-      condition {
-        member_type = "VirtualMachine"
-        key         = "Name"
-        operator    = "STARTSWITH"
-        value       = criteria.value
-      }
-    }
-  }
-
-  dynamic "conjunction" {
-    for_each = length(var.w01.avi_controllers) > 1 ? slice(var.w01.avi_controllers, 1, length(var.w01.avi_controllers)) : []
-    content {
-      operator = "OR"
-    }
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "nsxt_policy_group" "w01_avi_se" {
-  nsx_id       = "W01_AVI_SE"
-  display_name = "W01_AVI_SE"
-
-  criteria {
-    ipaddress_expression {
-      ip_addresses = [var.w01.avi_se_mgmt]
-    }
-  }
-
-  lifecycle {
-    create_before_destroy = true
   }
 }
 
@@ -269,17 +210,21 @@ resource "nsxt_policy_group" "vcf01_w01" {
     }
   }
 
-  conjunction {
-    operator = "OR"
+  # The SSP groups are nested only once SSP is deployed on w01 (var.w01.ssp is set). NSX rejects a path
+  # expression without members, so this criteria block and the OR before it exist only in that case.
+  dynamic "conjunction" {
+    for_each = local.w01_ssp_enabled ? [1] : []
+    content {
+      operator = "OR"
+    }
   }
 
-  criteria {
-    path_expression {
-      # The SSP groups are nested only once SSP is deployed on w01 (var.w01.ssp is set).
-      member_paths = concat(
-        [nsxt_policy_group.w01_avi.path, nsxt_policy_group.w01_avi_se.path],
-        local.w01_ssp_enabled ? [nsxt_policy_group.w01_vc.path, nsxt_policy_group.w01_ssp[0].path, nsxt_policy_group.w01_ssp_svc[0].path] : []
-      )
+  dynamic "criteria" {
+    for_each = local.w01_ssp_enabled ? [1] : []
+    content {
+      path_expression {
+        member_paths = [nsxt_policy_group.w01_vc.path, nsxt_policy_group.w01_ssp[0].path, nsxt_policy_group.w01_ssp_svc[0].path]
+      }
     }
   }
 }

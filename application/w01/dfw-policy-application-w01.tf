@@ -13,7 +13,7 @@ resource "nsxt_policy_security_policy" "w01_vc_policy" {
 
   rule {
     display_name       = "vCenter (In)"
-    source_groups      = [var.group_paths["w01_hosts"], var.group_paths["w01_nsx"], var.group_paths["w01_avi"], var.group_paths["w01_sup01"]]
+    source_groups      = [var.group_paths["w01_hosts"], var.group_paths["w01_nsx"], var.group_paths["w01_sup01"]]
     destination_groups = [var.group_paths["w01_vc"]]
     services           = [var.service_paths["https"], var.service_paths["tcp_6501_6502"], var.service_paths["tcp_7475_7476"], var.service_paths["tcp_9084"], var.service_paths["tcp_6500"], var.service_paths["tcp_9087"], var.service_paths["udp_902"], var.service_paths["http"]]
     action             = "ALLOW"
@@ -64,7 +64,7 @@ resource "nsxt_policy_security_policy" "w01_nsx_policy" {
 
   rule {
     display_name       = "NSX Manager (In)"
-    source_groups      = [var.group_paths["w01_vc"], var.group_paths["w01_avi"], var.group_paths["w01_sup01"]]
+    source_groups      = [var.group_paths["w01_vc"], var.group_paths["w01_sup01"]]
     destination_groups = [var.group_paths["w01_nsx"]]
     services           = [var.service_paths["https"]]
     action             = "ALLOW"
@@ -89,57 +89,6 @@ resource "nsxt_policy_security_policy" "w01_nsx_policy" {
     ip_version   = "IPV4"
     logged       = true
     log_label    = "w01_nsx"
-  }
-}
-
-resource "nsxt_policy_security_policy" "w01_avi_policy" {
-  display_name    = "Workload Domain Avi Controller"
-  description     = "Workload Domain 01 Avi Policy"
-  category        = "Application"
-  locked          = false
-  stateful        = true
-  tcp_strict      = true
-  scope           = [var.group_paths["w01_avi"]]
-  sequence_number = 13
-
-  rule {
-    display_name       = "Avi Controller (Intra)"
-    source_groups      = [var.group_paths["w01_avi"]]
-    destination_groups = [var.group_paths["w01_avi"]]
-    action             = "ALLOW"
-    ip_version         = "IPV4"
-    logged             = false
-  }
-
-  rule {
-    display_name       = "Avi Controller (In)"
-    source_groups      = [var.group_paths["w01_avi_se"], var.group_paths["w01_nsx"]]
-    destination_groups = [var.group_paths["w01_avi"]]
-    services           = [var.service_paths["ssh"], var.service_paths["tcp_8443"], var.service_paths["https"]]
-    scope              = [var.group_paths["w01_avi"], var.group_paths["w01_avi_se"]]
-    action             = "ALLOW"
-    ip_version         = "IPV4"
-    logged             = false
-  }
-
-  rule {
-    display_name       = "Avi Controller (Out)"
-    source_groups      = [var.group_paths["w01_avi"]]
-    destination_groups = [var.group_paths["w01_vc"], var.group_paths["w01_hosts"], var.group_paths["w01_nsx"], var.group_paths["w01_avi_se"]]
-    services           = [var.service_paths["https"], var.service_paths["tcp_8443"]]
-    action             = "ALLOW"
-    ip_version         = "IPV4"
-    direction          = "OUT"
-    logged             = false
-  }
-
-  rule {
-    display_name = "Avi Controller (Lock Down)"
-    scope        = [var.group_paths["w01_avi"]]
-    action       = "DROP"
-    ip_version   = "IPV4"
-    logged       = true
-    log_label    = "w01_avi"
   }
 }
 

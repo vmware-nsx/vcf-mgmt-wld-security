@@ -31,8 +31,6 @@ module "environment" {
 module "infrastructure" {
   source = "./infrastructure"
 
-  external_services = var.external_services
-
   group_paths           = module.groups_and_services.group_paths
   service_paths         = module.groups_and_services.service_paths
   context_profile_paths = module.groups_and_services.context_profile_paths

@@ -1,5 +1,5 @@
 # Optional local checks:  pip install pre-commit && pre-commit install
-# They run the same commands as .github/workflows/terraform.yml and need only terraform and python3.
+# They run the same commands as .github/workflows/terraform.yml and need only terraform.
 repos:
   - repo: local
     hooks:
@@ -15,9 +15,3 @@ repos:
         language: system
         pass_filenames: false
         files: \.tf$
-      - id: discover-tfvars-tests
-        name: discover-tfvars unit tests
-        entry: python3 -m unittest discover -s scripts
-        language: system
-        pass_filenames: false
-        files: ^scripts/

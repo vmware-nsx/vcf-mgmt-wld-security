@@ -1,8 +1,12 @@
 output "group_paths" {
   description = "Map of all NSX group names defined in this module to their policy path, for consumption by every policy-bearing module (environment, infrastructure, application/*)"
   value = merge({
+    ad_svc     = nsxt_policy_group.ad_svc.path
     backup_svc = nsxt_policy_group.backup_svc.path
     bastion    = nsxt_policy_group.bastion.path
+    dhcp_svc   = nsxt_policy_group.dhcp_svc.path
+    dns_svc    = nsxt_policy_group.dns_svc.path
+    ntp_svc    = nsxt_policy_group.ntp_svc.path
     smtp_svc   = nsxt_policy_group.smtp_svc.path
     tools      = nsxt_policy_group.tools.path
 
@@ -31,13 +35,11 @@ output "group_paths" {
     m01_ssp     = nsxt_policy_group.m01_ssp.path
     m01_ssp_svc = nsxt_policy_group.m01_ssp_svc.path
 
-    w01_vc     = nsxt_policy_group.w01_vc.path
-    w01_nsx    = nsxt_policy_group.w01_nsx.path
-    w01_avi    = nsxt_policy_group.w01_avi.path
-    w01_avi_se = nsxt_policy_group.w01_avi_se.path
-    w01_edges  = nsxt_policy_group.w01_edges.path
-    w01_hosts  = nsxt_policy_group.w01_hosts.path
-    w01_sup01  = nsxt_policy_group.w01_sup01.path
+    w01_vc    = nsxt_policy_group.w01_vc.path
+    w01_nsx   = nsxt_policy_group.w01_nsx.path
+    w01_edges = nsxt_policy_group.w01_edges.path
+    w01_hosts = nsxt_policy_group.w01_hosts.path
+    w01_sup01 = nsxt_policy_group.w01_sup01.path
     }, var.external_services.syslog_server != null ? {
     # Only present when an external syslog collector is configured (external_services.syslog_server).
     syslog_svc = nsxt_policy_group.syslog_svc[0].path

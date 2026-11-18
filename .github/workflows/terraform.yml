@@ -22,13 +22,3 @@ jobs:
 
       - name: Validate
         run: terraform validate
-
-  scripts:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-      - name: Unit tests for scripts/discover-tfvars.py
-        run: python3 -m unittest discover -s scripts

@@ -62,10 +62,8 @@ m01 = {
 w01 = {
   vcenter         = "w01-vc01"
   nsx_managers    = ["w01-nsx01a", "w01-nsx01b", "w01-nsx01c"]
-  avi_controllers = ["w01-avi01a", "w01-avi01b", "w01-avi01c"] # [] if Avi is not deployed
   edges           = "172.16.10.71-172.16.10.74"
   hosts           = "172.16.11.15-172.16.11.17"
-  avi_se_mgmt     = "172.16.23.11-172.16.23.100"
   sup01           = "172.16.10.101-172.16.10.110"
 
   # Security Services Platform on w01. Leave null until SSP is deployed there.

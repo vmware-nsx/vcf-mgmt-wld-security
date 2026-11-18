@@ -15,7 +15,7 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
 
   rule {
     display_name       = "DNS"
-    destination_groups = [nsxt_policy_group.dns_svc.path]
+    destination_groups = [var.group_paths["dns_svc"]]
     services           = [var.service_paths["dns_udp"], var.service_paths["dns_tcp"]]
     profiles           = [var.context_profile_paths["dns"]]
     action             = "ALLOW"
@@ -26,7 +26,7 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
 
   rule {
     display_name       = "NTP"
-    destination_groups = [nsxt_policy_group.ntp_svc.path]
+    destination_groups = [var.group_paths["ntp_svc"]]
     services           = [var.service_paths["ntp"]]
     action             = "ALLOW"
     ip_version         = "IPV4"
@@ -36,7 +36,7 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
 
   rule {
     display_name       = "DHCP"
-    destination_groups = [nsxt_policy_group.dhcp_svc.path]
+    destination_groups = [var.group_paths["dhcp_svc"]]
     services           = [var.service_paths["dhcp_server"]]
     action             = "ALLOW"
     ip_version         = "IPV4"
@@ -46,7 +46,7 @@ resource "nsxt_policy_security_policy" "vcf_infrastructure" {
 
   rule {
     display_name       = "AD"
-    destination_groups = [nsxt_policy_group.ad_svc.path]
+    destination_groups = [var.group_paths["ad_svc"]]
     services           = [var.service_paths["activdir"]]
     action             = "ALLOW"
     ip_version         = "IPV4"

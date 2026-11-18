@@ -166,13 +166,11 @@ variable "m01" {
 
 variable "w01" {
   type = object({
-    vcenter         = string
-    nsx_managers    = list(string)
-    avi_controllers = list(string)
-    edges           = string
-    hosts           = string
-    avi_se_mgmt     = string
-    sup01           = string
+    vcenter      = string
+    nsx_managers = list(string)
+    edges        = string
+    hosts        = string
+    sup01        = string
     ssp = optional(object({
       sspi_vm = string
       ssp_svc = string
@@ -182,10 +180,8 @@ variable "w01" {
     Workload domain 01 (w01) components.
       vcenter          vCenter Server VM name
       nsx_managers     NSX Manager node VM names (1 to 3); each is tagged and matched by name
-      avi_controllers  NSX ALB (Avi) Controller node VM names (1 to 3); use [] if Avi is not deployed
       edges            NSX Edge node IPs: an address, a range (a.b.c.d-e.f.g.h) or a CIDR block
       hosts            ESXi host IPs: an address, a range or a CIDR block
-      avi_se_mgmt      Avi Service Engine management network: an address, a range or a CIDR block
       sup01            Supervisor node IP range: an address, a range or a CIDR block
       ssp              Optional. Security Services Platform for this domain: sspi_vm (SSPI VM name) and
                        ssp_svc (SSP services IP range). Leave null until SSP is deployed; setting it creates
@@ -203,13 +199,8 @@ variable "w01" {
   }
 
   validation {
-    condition     = alltrue([for n in var.w01.avi_controllers : length(trimspace(n)) > 0])
-    error_message = "w01.avi_controllers must not contain empty VM names (use [] if Avi is not deployed)."
-  }
-
-  validation {
-    condition     = alltrue([for r in [var.w01.edges, var.w01.hosts, var.w01.avi_se_mgmt, var.w01.sup01] : can(regex("^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}(-(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|/(3[0-2]|[12]?[0-9]))?$", r))])
-    error_message = "w01.edges, w01.hosts, w01.avi_se_mgmt and w01.sup01 must each be an IPv4 address, an address range (a.b.c.d-e.f.g.h) or a CIDR block (a.b.c.d/nn)."
+    condition     = alltrue([for r in [var.w01.edges, var.w01.hosts, var.w01.sup01] : can(regex("^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}(-(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|/(3[0-2]|[12]?[0-9]))?$", r))])
+    error_message = "w01.edges, w01.hosts and w01.sup01 must each be an IPv4 address, an address range (a.b.c.d-e.f.g.h) or a CIDR block (a.b.c.d/nn)."
   }
 
   validation {

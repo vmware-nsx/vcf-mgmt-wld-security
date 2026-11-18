@@ -2,6 +2,10 @@
 
 variable "external_services" {
   type = object({
+    dns_server    = string
+    ntp_server    = string
+    dhcp_server   = string
+    ad_server     = string
     smtp_server   = string
     bastion_host  = string
     tools_server  = string
@@ -77,13 +81,11 @@ variable "m01" {
 
 variable "w01" {
   type = object({
-    vcenter         = string
-    nsx_managers    = list(string)
-    avi_controllers = list(string)
-    edges           = string
-    hosts           = string
-    avi_se_mgmt     = string
-    sup01           = string
+    vcenter      = string
+    nsx_managers = list(string)
+    edges        = string
+    hosts        = string
+    sup01        = string
     ssp = optional(object({
       sspi_vm = string
       ssp_svc = string
@@ -93,10 +95,8 @@ variable "w01" {
     Workload domain 01 (w01) components.
       vcenter          vCenter Server VM name
       nsx_managers     NSX Manager node VM names (1 to 3); each is tagged and matched by name
-      avi_controllers  NSX ALB (Avi) Controller node VM names (1 to 3); use [] if Avi is not deployed
       edges            NSX Edge node IPs: an address, a range (a.b.c.d-e.f.g.h) or a CIDR block
       hosts            ESXi host IPs: an address, a range or a CIDR block
-      avi_se_mgmt      Avi Service Engine management network: an address, a range or a CIDR block
       sup01            Supervisor node IP range: an address, a range or a CIDR block
       ssp              Optional. Security Services Platform for this domain: sspi_vm (SSPI VM name) and
                        ssp_svc (SSP services IP range). Leave null until SSP is deployed; setting it creates
