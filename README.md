@@ -41,14 +41,13 @@ modules, so that each policy module can be planned/applied independently with
 ├── variables.tf               # Input variable declarations (all modules' inputs)
 ├── terraform.tfvars.example   # Example variable values (copy to terraform.tfvars, which is git-ignored)
 ├── .terraform.lock.hcl        # Pinned provider build (committed on purpose)
-├── moved.tf                   # Temporary state moves for the DNS/NTP/DHCP/AD groups (delete after one apply)
 ├── groups-and-services/       # All NSX groups and custom services
 ├── infrastructure/            # DFW "Infrastructure" category module
-├── environment/                # DFW "Environment" category module
-└── application/                 # DFW "Application" category modules
-    ├── fm/                       #   VCF Fleet Management application policies
-    ├── m01/                      #   Management domain (m01) application policies
-    └── w01/                      #   Workload domain 01 (w01) application policies
+├── environment/               # DFW "Environment" category module
+└── application/               # DFW "Application" category modules
+    ├── fm/                    #   VCF Fleet Management application policies
+    ├── m01/                   #   Management domain (m01) application policies
+    └── w01/                   #   Workload domain 01 (w01) application policies
 ```
 
 | Module | File | Description |
@@ -56,7 +55,6 @@ modules, so that each policy module can be planned/applied independently with
 | root | `main.tf` | Terraform provider configuration and `module` blocks for `groups_and_services`, `infrastructure`, `environment`, and the three `application` modules |
 | root | `variables.tf` | Input variable declarations: the NSX connection plus the grouped `external_services`, `fleet`, `m01` and `w01` objects, with input validation |
 | root | `versions.tf` | Terraform and provider version constraints |
-| root | `moved.tf` | `moved` blocks that carry the DNS, NTP, DHCP and AD groups from the `infrastructure` module to `groups-and-services` in an existing state. Apply once, then delete the file |
 | root | `terraform.tfvars.example` | Example variable values (copy to the git-ignored `terraform.tfvars` and edit) |
 | `groups-and-services` | `groups-vcf_ext.tf` | NSX groups for external services (DNS, NTP, DHCP, AD, bastion, tools, backup, SMTP and, when configured, syslog) |
 | `groups-and-services` | `groups-vcf_fm.tf` | NSX groups for VCF Fleet Management components |
@@ -73,7 +71,7 @@ modules, so that each policy module can be planned/applied independently with
 | `application/fm` | `dfw-policy-application-fm.tf` | Application policies for VCF Operations, VCF Automation, VCF Management Services (`VCF01_MSVC`), VCF License (`VCF_LIC`), vDefend License Hub (`VCF_LHUB`), VCF SDDC Manager (`VCF01_SDDC`), and VCF Operations for Networks |
 | `application/m01` | `dfw-policy-application-m01.tf` | Application policies for the management domain's vCenter, Avi, and SSP components |
 | `application/w01` | `dfw-policy-application-w01.tf` | Application policies for workload domain 01's vCenter and NSX components, plus the SSP policy when `w01.ssp` is set |
-| `application/*` | `variables.tf` / `versions.tf` | Module inputs (`group_paths`, `service_paths`) and provider requirements |
+| `application/*` | `variables.tf` / `versions.tf` | Module inputs (`group_paths`, `service_paths`, plus `ssp_enabled` for `application/w01`) and provider requirements |
 
 Every NSX group and service is defined exactly once, in `groups-and-services`, and exposed via its `group_paths` /
 `service_paths` / `context_profile_paths` outputs. `environment`, `infrastructure`,
@@ -90,7 +88,7 @@ name with `data` sources, so no policy module needs API lookups to build a rule.
 can be applied in any order relative to one another; `terraform apply -target=module.<name>`
 for any of them automatically creates the `groups-and-services` resources it needs first.
 
-**Optional components.** Two parts of the configuration are switched on by setting an optional
+**Optional components.** Some parts of the configuration are switched on by setting an optional
 attribute in your tfvars; leave it `null` (or `[]` for lists) while the component is not deployed:
 
 | Attribute | Switches on |
@@ -228,6 +226,7 @@ resources if you move them (`terraform state mv`, or temporary `moved` blocks) b
 | `nsxt_policy_group.vcf_f` | `nsxt_policy_group.vcf_fleet` |
 | module `environment`: `nsxt_policy_security_policy.vcf_f_environment` | `vcf_fleet_environment` |
 | module `environment`: `vcf01_m01_environment`, `vcf01_w01_environment` | `domain["m01"]`, `domain["w01"]` |
+| module `infrastructure`: `nsxt_policy_group.dns_svc` / `ntp_svc` / `dhcp_svc` / `ad_svc` | module `groups_and_services`: the same four resource names |
 
 Without the moves, `terraform plan` would destroy and recreate those resources. After the moves, the
 plan shows only the rule renames and the other changes listed by the plan.
@@ -255,8 +254,8 @@ the Lock Down log on the ESXi host (`/var/log/dfwpktlogs.log`).
 
 **Policy sequence numbers.** Infrastructure uses 1. Environment uses 1 (VCF Fleet External), 2 (Fleet
 Management), 3 (management domain) and 4 (workload domain 01). Application uses 1-7 (Fleet
-Management), 8-10 (management domain) and 11-14 (workload domain 01). Keep these ranges apart when
-you add a policy.
+Management), 8-10 (management domain) and 11-14 (workload domain 01: 11, 12 and the SSP policy at 14;
+13 is free). Keep these ranges apart when you add a policy.
 
 ## State management
 
@@ -290,10 +289,10 @@ The configuration creates three categories of DFW policies scoped to VCF compone
 | Category | Policy | Description |
 |----------|--------|-------------|
 | Infrastructure | VCF Fleet Infrastructure | Allows DNS, NTP, DHCP and AD traffic; drops and logs the remaining DNS, NTP and DHCP traffic |
-| Environment | VCF Fleet External | Controls inbound access (bastion, tools, VCF Automation portal) and outbound syslog, backup, mail and depot traffic for the full VCF fleet |
+| Environment | VCF Fleet External | Controls inbound access (bastion, tools, VCF Automation portal) and the syslog, backup, mail and Broadcom depot traffic of the full VCF fleet |
 | Environment | VCF Fleet Management | Controls traffic between fleet management tools and the VCF domains |
 | Environment | VCF01 Management Domain | Traffic between the management domain and the rest of the fleet; intra-domain traffic jumps to the Application policies |
-| Environment | VCF01 Workload Domain | Same rule set as the management domain, for workload domain 01 |
+| Environment | VCF01 Workload Domain | Same rule set as the management domain for workload domain 01, plus the two Supervisor rules (Supervisor to Workload Domain and back) |
 | Application | VCF Operations / Automation / Operations for Networks / Management Services / License / License Hub / SDDC Manager Policies | Component-level rules for VCF Fleet Management applications |
 | Application | Management Domain vCenter / Avi / SSP Policies | Component-level rules for management domain (m01) applications |
 | Application | Workload Domain 01 vCenter / NSX Policies | Component-level rules for workload domain 01 (w01) applications (the SSP policy exists only when `w01.ssp` is set) |
