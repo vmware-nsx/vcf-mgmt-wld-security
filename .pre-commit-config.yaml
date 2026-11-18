@@ -1,5 +1,5 @@
 # Optional local checks:  pip install pre-commit && pre-commit install
-# They run the same commands as .github/workflows/terraform.yml and need only terraform.
+# They check formatting and validity of the Terraform code and need only terraform.
 repos:
   - repo: local
     hooks:
