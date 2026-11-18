@@ -304,5 +304,4 @@ All policies use `tcp_strict = true` and `stateful = true`. Each policy except "
 
 Report problems and suggest changes through the issues of the repository this configuration is
 published in (https://github.com/nnikodimov/vcf-mgmt-wld-security). Before opening a pull request, run
-`terraform fmt -recursive` and `terraform init -backend=false && terraform validate`
-(`.pre-commit-config.yaml` runs both as optional local hooks).
+`terraform fmt -recursive` and `terraform init -backend=false && terraform validate`.
