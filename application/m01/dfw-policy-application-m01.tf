@@ -114,32 +114,23 @@ resource "nsxt_policy_security_policy" "m01_ssp_policy" {
 
   rule {
     display_name       = "SSP (In)"
-    source_groups      = [var.group_paths["vcf01_sspi"]]
-    destination_groups = [var.group_paths["m01_ssp"]]
-    services           = [var.service_paths["ssh"], var.service_paths["tcp_6443"]]
-    action             = "ALLOW"
-    ip_version         = "IPV4"
-    logged             = false
-  }
-
-  rule {
-    display_name  = "SSP (Out)"
-    source_groups = [var.group_paths["m01_ssp"]]
-    services      = [var.service_paths["https"], var.service_paths["tcp_1234_1235"]]
-    action        = "ALLOW"
-    ip_version    = "IPV4"
-    direction     = "OUT"
-    logged        = false
-  }
-
-  rule {
-    display_name       = "SSP (Ingestion)"
     source_groups      = [var.group_paths["m01_nsx"], var.group_paths["m01_hosts"], var.group_paths["m01_edges"]]
     destination_groups = [var.group_paths["m01_ssp_svc"]]
     services           = [var.service_paths["https"], var.service_paths["tcp_9092"]]
     action             = "ALLOW"
     ip_version         = "IPV4"
     direction          = "IN"
+    logged             = false
+  }
+
+  rule {
+    display_name       = "SSP (Out)"
+    source_groups      = [var.group_paths["m01_ssp"]]
+    destination_groups = [var.group_paths["m01_nsx"], var.group_paths["m01_vc"]]
+    services           = [var.service_paths["https"], var.service_paths["tcp_1234_1235"]]
+    action             = "ALLOW"
+    ip_version         = "IPV4"
+    direction          = "OUT"
     logged             = false
   }
 

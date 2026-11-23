@@ -58,8 +58,8 @@ variable "external_services" {
   description = <<-EOT
     IP addresses of the services outside the VCF fleet that the fleet is allowed to reach or be reached from:
     DNS, NTP, DHCP, Active Directory, SMTP, the bastion/jump host, the automation/tools server and the backup server.
-    Optional: syslog_server, an external syslog collector. Setting it creates the SYSLOG_SVC group and adds it to
-    the Syslog rule of the "VCF Fleet External" policy; leave it null if the fleet logs only to VCF Management Services.
+    Optional: syslog_server, an external syslog collector. Setting it creates the SYSLOG_SVC group and adds a Syslog
+    rule to the "VCF Fleet Infrastructure" policy (and syslog to its Lock Down services); leave it null if the fleet logs only to VCF Management Services.
   EOT
 
   validation {

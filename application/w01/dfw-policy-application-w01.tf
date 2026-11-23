@@ -64,9 +64,9 @@ resource "nsxt_policy_security_policy" "w01_nsx_policy" {
 
   rule {
     display_name       = "NSX Manager (In)"
-    source_groups      = [var.group_paths["w01_vc"], var.group_paths["w01_sup01"]]
+    source_groups      = [var.group_paths["w01_vc"], var.group_paths["w01_sup01"], var.group_paths["w01_edges"], var.group_paths["w01_hosts"]]
     destination_groups = [var.group_paths["w01_nsx"]]
-    services           = [var.service_paths["https"]]
+    services           = [var.service_paths["https"], var.service_paths["tcp_1234_1235"]]
     action             = "ALLOW"
     ip_version         = "IPV4"
     direction          = "IN"
@@ -75,8 +75,8 @@ resource "nsxt_policy_security_policy" "w01_nsx_policy" {
 
   rule {
     display_name       = "NSX Manager (Out)"
-    source_groups      = [var.group_paths["w01_hosts"], var.group_paths["w01_edges"], var.group_paths["w01_nsx"]]
-    destination_groups = [var.group_paths["w01_hosts"], var.group_paths["w01_edges"], var.group_paths["w01_nsx"], var.group_paths["w01_vc"]]
+    source_groups      = [var.group_paths["w01_nsx"]]
+    destination_groups = [var.group_paths["w01_hosts"], var.group_paths["w01_edges"], var.group_paths["w01_vc"]]
     services           = [var.service_paths["tcp_5671"], var.service_paths["tcp_1234_1235"], var.service_paths["http"], var.service_paths["https"], var.service_paths["tcp_9087"]]
     action             = "ALLOW"
     ip_version         = "IPV4"

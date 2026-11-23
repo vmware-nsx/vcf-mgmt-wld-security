@@ -37,11 +37,11 @@ resource "nsxt_policy_security_policy" "vcf_fleet_environment" {
     logged             = false
   }
 
-  # Syslog goes to VCF Management Services and, when configured, to the external collector (SYSLOG_SVC).
+  # Syslog to the external collector (SYSLOG_SVC) is allowed in the Infrastructure category.
   rule {
-    display_name       = "Syslog"
+    display_name       = "VCF Logging service"
     source_groups      = [var.group_paths["vcf_fleet"]]
-    destination_groups = compact([lookup(var.group_paths, "syslog_svc", null), var.group_paths["vcf01_msvc"]])
+    destination_groups = [var.group_paths["vcf01_msvc"]]
     services           = [var.service_paths["syslog_tcp"], var.service_paths["syslog_udp"], var.service_paths["tcp_1514"], var.service_paths["tcp_9543"]]
     action             = "ALLOW"
     ip_version         = "IPV4"

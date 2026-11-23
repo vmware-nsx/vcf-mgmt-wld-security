@@ -94,7 +94,7 @@ attribute in your tfvars; leave it `null` (or `[]` for lists) while the componen
 | Attribute | Switches on |
 |-----------|-------------|
 | `fleet.ops_net` (`platform`, `collector`) | VM tags for VCF Operations for Networks |
-| `external_services.syslog_server` | The `SYSLOG_SVC` group and its use as a destination of the Syslog rule in the "VCF Fleet External" policy |
+| `external_services.syslog_server` | The `SYSLOG_SVC` group, the Syslog rule in the "VCF Fleet Infrastructure" policy and the syslog services in its Lock Down rule |
 | `w01.ssp` (`sspi_vm`, `ssp_svc`) | The `w01_sspi` / `w01_ssp` / `w01_ssp_svc` groups, their nesting in `VCF01_W01`, and the "Workload Domain 01 SSP Policy" |
 | `m01.avi_controllers` | Tagging and name matching of the management domain Avi Controller VMs; `[]` leaves `M01_AVI` empty |
 
@@ -242,7 +242,7 @@ matches a flow: **Emergency, Infrastructure, Environment, Application**, then th
 | `JUMP_TO_APPLICATION` | Skips the remaining Environment rules (including the Environment Lock Down) and evaluates the flow in the Application category. Used for traffic inside a domain. |
 | `(In)` / `(Out)` | The direction of an Application rule at the VM it is applied to. |
 | `(Intra)` | Traffic between members of the same group. |
-| `(Lock Down)` | The last rule of a policy: set to `DROP` and logs everything that was not matched above it. In "VCF Fleet Infrastructure" it is limited to DNS, NTP and DHCP traffic. To run a policy in monitor-only mode first, temporarily set its Lock Down rule to `ALLOW` and review the log. |
+| `(Lock Down)` | The last rule of a policy: set to `DROP` and logs everything that was not matched above it. In "VCF Fleet Infrastructure" it is limited to DNS, NTP, DHCP and (when configured) syslog traffic. To run a policy in monitor-only mode first, temporarily set its Lock Down rule to `ALLOW` and review the log. |
 
 Because an Environment `ALLOW` bypasses the Application layer, keep Environment rules as narrow as
 the fine-grained Application rules you rely on. Rules are stateful, so only the first packet of a
@@ -288,8 +288,8 @@ The configuration creates three categories of DFW policies scoped to VCF compone
 
 | Category | Policy | Description |
 |----------|--------|-------------|
-| Infrastructure | VCF Fleet Infrastructure | Allows DNS, NTP, DHCP and AD traffic; drops and logs the remaining DNS, NTP and DHCP traffic |
-| Environment | VCF Fleet External | Controls inbound access (bastion, tools, VCF Automation portal) and the syslog, backup, mail and Broadcom depot traffic of the full VCF fleet |
+| Infrastructure | VCF Fleet Infrastructure | Allows DNS, NTP, DHCP, AD and (when configured) external syslog traffic; drops and logs the remaining DNS, NTP, DHCP and syslog traffic |
+| Environment | VCF Fleet External | Controls inbound access (bastion, tools, VCF Automation portal) and the logging, backup, mail and Broadcom depot traffic of the full VCF fleet |
 | Environment | VCF Fleet Management | Controls traffic between fleet management tools and the VCF domains |
 | Environment | VCF01 Management Domain | Traffic between the management domain and the rest of the fleet; intra-domain traffic jumps to the Application policies |
 | Environment | VCF01 Workload Domain | Same rule set as the management domain for workload domain 01, plus the two Supervisor rules (Supervisor to Workload Domain and back) |
@@ -297,7 +297,7 @@ The configuration creates three categories of DFW policies scoped to VCF compone
 | Application | Management Domain vCenter / Avi / SSP Policies | Component-level rules for management domain (m01) applications |
 | Application | Workload Domain 01 vCenter / NSX Policies | Component-level rules for workload domain 01 (w01) applications (the SSP policy exists only when `w01.ssp` is set) |
 
-All policies use `tcp_strict = true` and `stateful = true`. Each policy except "VCF Fleet External" ends with an explicit **Lock Down** rule (`logged = true`) that logs any traffic not matched by the rules above it. All Lock Down rules are `action = "DROP"`, so traffic not allowed by the rules above them is blocked and logged. The "VCF Fleet Infrastructure" Lock Down rule is limited to DNS, NTP and DHCP traffic. To trial a policy in monitor-only mode, temporarily set its Lock Down rule to `ALLOW` and review the log.
+All policies use `tcp_strict = true` and `stateful = true`. Each policy except "VCF Fleet External" ends with an explicit **Lock Down** rule (`logged = true`) that logs any traffic not matched by the rules above it. All Lock Down rules are `action = "DROP"`, so traffic not allowed by the rules above them is blocked and logged. The "VCF Fleet Infrastructure" Lock Down rule is limited to DNS, NTP, DHCP and (when configured) syslog traffic. To trial a policy in monitor-only mode, temporarily set its Lock Down rule to `ALLOW` and review the log.
 
 ## Support and contributing
 

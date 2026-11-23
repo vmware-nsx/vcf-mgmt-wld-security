@@ -122,26 +122,6 @@ resource "nsxt_policy_security_policy" "vcfops_net_policy" {
   }
 
   rule {
-    display_name       = "VCF Operations for Networks (In)"
-    source_groups      = [var.group_paths["vcf_ops"]]
-    destination_groups = [var.group_paths["vcf_ops_net"]]
-    services           = [var.service_paths["https"]]
-    action             = "ALLOW"
-    ip_version         = "IPV4"
-    direction          = "IN"
-    logged             = false
-  }
-
-  rule {
-    display_name  = "VCF Operations for Networks (Out)"
-    source_groups = [var.group_paths["vcf01_ops_net_cn"]]
-    action        = "ALLOW"
-    ip_version    = "IPV4"
-    direction     = "OUT"
-    logged        = false
-  }
-
-  rule {
     display_name = "VCF Operations for Networks (Lock Down)"
     action       = "DROP"
     ip_version   = "IPV4"
