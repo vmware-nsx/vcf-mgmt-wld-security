@@ -63,15 +63,15 @@ modules, so that each policy module can be planned/applied independently with
 | `groups-and-services` | `services.tf` | Custom NSX services and the custom context profile shared across policy modules |
 | `groups-and-services` | `builtin-services.tf` | Fixed paths of the built-in NSX services and context profiles (HTTPS, SSH, DNS, ...), exposed through `service_paths` / `context_profile_paths` |
 | `groups-and-services` | `variables.tf` / `outputs.tf` / `versions.tf` | Module inputs, the `group_paths`/`service_paths`/`context_profile_paths` maps consumed by every other module, and provider requirements |
-| `infrastructure` | `dfw-policy-infrastructure.tf` | DFW Infrastructure category policy |
+| `infrastructure` | `dfw-policy.tf` | DFW Infrastructure category policy |
 | `infrastructure` | `variables.tf` / `versions.tf` | Module inputs (`group_paths`, `service_paths`, `context_profile_paths`) and provider requirements |
-| `environment` | `dfw-policy-vcf-fleet.tf` | The VCF Fleet External Environment policy |
-| `environment` | `dfw-policy-vcf-fleet-mgmt.tf` | The VCF Fleet Management Environment policy |
+| `environment` | `dfw-policy-fleet.tf` | The VCF Fleet External Environment policy |
+| `environment` | `dfw-policy-fm.tf` | The VCF Fleet Management Environment policy |
 | `environment` | `dfw-policy-domains.tf` | The VCF01 Management Domain and VCF01 Workload Domain Environment policies, generated with `for_each` from one rule table (`local.domains`) |
 | `environment` | `variables.tf` / `versions.tf` | Module inputs (`group_paths`, `service_paths`, `context_profile_paths`) and provider requirements |
-| `application/fm` | `dfw-policy-application-fm.tf` | Application policies for VCF Operations, VCF Automation, VCF Management Services (`VCF01_MSVC`), VCF License (`VCF_LIC`), vDefend License Hub (`VCF_LHUB`), VCF SDDC Manager (`VCF01_SDDC`), and VCF Operations for Networks |
-| `application/m01` | `dfw-policy-application-m01.tf` | Application policies for the management domain's vCenter, Avi, and SSP components |
-| `application/w01` | `dfw-policy-application-w01.tf` | Application policies for workload domain 01's vCenter and NSX components, plus the SSP policy when `w01.ssp` is set |
+| `application/fm` | `dfw-policy-fm.tf` | Application policies for VCF Operations, VCF Automation, VCF Management Services (`VCF01_MSVC`), VCF License (`VCF_LIC`), vDefend License Hub (`VCF_LHUB`), VCF SDDC Manager (`VCF01_SDDC`), and VCF Operations for Networks |
+| `application/m01` | `dfw-policy-m01.tf` | Application policies for the management domain's vCenter, Avi, and SSP components |
+| `application/w01` | `dfw-policy-w01.tf` | Application policies for workload domain 01's vCenter and NSX components, plus the SSP policy when `w01.ssp` is set |
 | `application/*` | `variables.tf` / `versions.tf` | Module inputs (`group_paths`, `service_paths`, plus `ssp_enabled` for `application/w01`) and provider requirements |
 
 Every NSX group and service is defined exactly once, in `groups-and-services`, and exposed via its `group_paths` /

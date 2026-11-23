@@ -1,5 +1,5 @@
 # Environment category policy for VCF Fleet Management (sequence 2). The fleet-wide policy (sequence 1)
-# is in dfw-policy-vcf-fleet.tf and the domain policies (sequence 3 and 4) are in
+# is in dfw-policy-fleet.tf and the domain policies (sequence 3 and 4) are in
 # dfw-policy-domains.tf.
 #
 # An ALLOW rule here ends evaluation: the flow is not checked against the Application policies.

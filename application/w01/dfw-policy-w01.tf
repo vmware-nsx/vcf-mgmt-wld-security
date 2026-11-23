@@ -1,4 +1,4 @@
-# Application category policies for workload domain 01 (w01): vCenter, NSX Manager, Avi and, when
+# Application category policies for workload domain 01 (w01): vCenter, NSX Manager and, when
 # var.ssp_enabled is set, SSP. Policy sequence numbers 11-14 (fm uses 1-7, m01 uses 8-10).
 
 resource "nsxt_policy_security_policy" "w01_vc_policy" {

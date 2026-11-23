@@ -1,13 +1,13 @@
 # Environment category policy for the whole fleet (sequence 1). The VCF Fleet Management policy
-# (sequence 2) is in dfw-policy-vcf-fleet-mgmt.tf. The domain policies (sequence 3 and 4) are in
+# (sequence 2) is in dfw-policy-fm.tf. The domain policies (sequence 3 and 4) are in
 # dfw-policy-domains.tf; give any further workload domain the next free sequence number.
 #
 # An ALLOW rule here ends evaluation: the flow is not checked against the Application policies.
 # JUMP_TO_APPLICATION skips the remaining Environment rules and hands the flow to Application.
 
 resource "nsxt_policy_security_policy" "vcf_fleet_environment" {
-  display_name    = "VCF Fleet External"
-  description     = "VCF Fleet Environment"
+  display_name    = "VCF Fleet"
+  description     = "VCF Fleet"
   category        = "Environment"
   locked          = false
   stateful        = true
