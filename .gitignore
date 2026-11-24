@@ -2,11 +2,12 @@
 *.tfstate
 *.tfstate.*
 .terraform/
-.terraform.lock.hcl
+# .terraform.lock.hcl is committed on purpose so every run uses the same provider build
 
 # Terraform variable files that may contain secrets
 *.tfvars
 *.tfvars.json
+*.tfvars.local
 
 # Crash log files
 crash.log
@@ -20,6 +21,9 @@ override.tf.json
 
 # Plan output files
 *.tfplan
+
+# Local tooling
+.claude/
 
 # macOS
 .DS_Store
